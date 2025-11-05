@@ -1,0 +1,87 @@
+# ------------------------------------
+# Node
+# ------------------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Optional: si quieres versionar lockfile, borra el de arriba
+
+# ------------------------------------
+# Build
+# ------------------------------------
+dist/
+build/
+out/
+tmp/
+temp/
+
+# tsbuildinfo (incremental TS build)
+*.tsbuildinfo
+
+# ------------------------------------
+# Environment
+# ------------------------------------
+.env
+.env.*
+!.env.example
+*.local
+
+# ------------------------------------
+# Logs
+# ------------------------------------
+logs/
+*.log
+*.log.*
+log/
+
+# ------------------------------------
+# OS
+# ------------------------------------
+# MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux temp
+*~
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ------------------------------------
+# Editor config
+# ------------------------------------
+.vscode/
+.history/
+.idea/
+*.swp
+*.swo
+
+# ------------------------------------
+# Coverage / Tests
+# ------------------------------------
+coverage/
+.clinic/
+.nyc_output/
+
+# ------------------------------------
+# Docker
+# ------------------------------------
+docker-compose.override.yml
+
+# ------------------------------------
+# Misc
+# ------------------------------------
+*.bak
+*.tmp
+*.cache
+*.orig
