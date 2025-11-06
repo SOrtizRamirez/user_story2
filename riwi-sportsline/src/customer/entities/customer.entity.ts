@@ -1,7 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, CreateDateColumn } from "typeorm";
 
-@Entity({ name: 'users'})
-export class User {
+@Entity({ name: 'customers' })
+export class Customer {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -12,14 +12,14 @@ export class User {
     email: string;
 
     @Column({nullable: false})
-    password: string;
+    phone: string;
 
     @Column({nullable: false})
-    role: string;
+    address: string;
 
     @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
-        createdAt: Date;
-    
+    createdAt: Date;
+
     @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
     updatedAt: Date;
 }
