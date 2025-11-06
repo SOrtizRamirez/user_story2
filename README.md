@@ -138,3 +138,11 @@
  | npm run start:dev | Modo desarrollo con hot-reload |
  | npm run build | Compila a JS |
  | npm run test | Ejecuta pruebas |
+
+ ## ✅ HU - 02 TAREA 4
+
+- POST
+![POST IMAGE](image.png)
+
+- GET
+![GET IMAGE](image-1.png)
