@@ -10,3 +10,5 @@ import { Client } from './client.entity';
   providers: [ClientService]
 })
 export class ClientModule {}
+
+// HU3 - Tarea 1 - "Generar los módulos, controladores y servicios de usuario, producto y cliente." - LISTA.
