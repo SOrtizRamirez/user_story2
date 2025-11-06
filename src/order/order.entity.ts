@@ -1,14 +1,15 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, ManyToOne, Column, OneToMany } from 'typeorm';
 import { User } from 'src/user/user.entity';
 import { Product } from 'src/product/product.entity';
 import { Client } from 'src/client/client.entity';
+import { OrderDetail } from './order-detail.entity';
 
-@Entity()
+@Entity({ name: 'orders' })
 export class Order {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({ type: 'int' })
     quantity: number;
 
     @ManyToOne(() => User, (user) => user.orders)
@@ -19,4 +20,7 @@ export class Order {
 
     @ManyToOne(() => Client, (client) => client.orders)
     client: Client;
+
+    @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.order)
+    orderDetails: OrderDetail[];
 }

@@ -26,7 +26,8 @@ import { OrderModule } from './order/order.module';
           database: configService.get('DB_DATABASE'),
 
           autoLoadEntities: true,
-          synchronize: true, // SOLO PARA DESARROLLO
+          synchronize: configService.get<string>('NODE_ENV') !== 'production',
+          logging: configService.get<string>('NODE_ENV') !== 'production',
         }),
       }),
       UserModule,
