@@ -1,7 +1,9 @@
 import {
   Entity, PrimaryGeneratedColumn, Column,
-  CreateDateColumn, UpdateDateColumn, Index, Unique
+  CreateDateColumn, UpdateDateColumn, OneToMany
 } from 'typeorm';
+
+import { Order } from '../orders/orders.entity';
 
 export type UserRole = 'admin' | 'customer' | 'analyst';
 
@@ -27,5 +29,8 @@ export class User {
 
   @Column({ type: 'boolean', default: true })
   active!: boolean;
+
+  @OneToMany(() => Order, (order) => order.user, { cascade: false })
+  orders!: Order[];
 }
 

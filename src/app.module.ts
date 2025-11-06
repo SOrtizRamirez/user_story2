@@ -1,15 +1,19 @@
-// src/app.module.ts
+// src/app.module.ts (ejemplo)
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { typeOrmAsyncConfig } from './database/typeorm.config';
 import { UsersModule } from './users/users.module';
+import { ProductsModule } from './products/products.module';
+import { ClientsModule } from './clients/client.module';
+import { OrdersModule } from './orders/orders.module';
+import ormConfig from './typeorm.config'; // tu archivo existente
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
-    TypeOrmModule.forRootAsync(typeOrmAsyncConfig),
+    TypeOrmModule.forRoot(ormConfig),
     UsersModule,
+    ProductsModule,
+    ClientsModule,
+    OrdersModule,
   ],
 })
 export class AppModule {}

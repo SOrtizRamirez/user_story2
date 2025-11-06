@@ -33,3 +33,6 @@ Este es el proyecto backend para la aplicación Riwi Sportsline, construido con 
 
 Con estos pasos, deberías tener una buena base para tu proyecto NestJS. Si necesitas más detalles sobre algún paso en particular o tienes alguna duda, avísame y te ayudo. ¡Mucho éxito con tu proyecto! 
 
+
+
+>>>>>>> feature_1_sharon
