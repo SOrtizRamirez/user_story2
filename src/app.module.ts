@@ -7,15 +7,17 @@ import { UserModule } from './user/user.module';
 import { ClientModule } from './client/client.module';
 import { ProductModule } from './product/product.module';
 import { OrderModule } from './order/order.module';
+import { envSchema } from './config/env.validation';
 
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true, // hace que esté disponible en toda la app
+      validationSchema: envSchema,
       envFilePath: '.env',
       }),
-      TypeOrmModule.forRootAsync({
+      TypeOrmModule.forRootAsync({ 
         inject: [ConfigService],
         useFactory: (configService: ConfigService) => ({
           type: 'postgres',
