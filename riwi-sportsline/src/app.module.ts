@@ -8,6 +8,9 @@ import { Customer } from './customer/entities/customer.entity';
 import { Order } from "./order/entities/order.entity";
 import { Product } from "./product/entities/product.entity";
 import { User } from "./user/entities/user.entity";
+import { CustomerModule } from './customer/customer.module';
+import { OrderModule } from './order/order.module';
+import { ProductModule } from './product/product.module';
 
 @Module({
   imports: [
@@ -34,6 +37,12 @@ import { User } from "./user/entities/user.entity";
 
     //  Módulo de tareas (u otros)
     UserModule,
+
+    CustomerModule,
+
+    OrderModule,
+
+    ProductModule,
   ],
   controllers: [AppController],
   providers: [AppService],
