@@ -1,10 +1,10 @@
 import { DataSource } from "typeorm";
 import { config } from "dotenv";
-import { User } from "./src/user/user.entity.ts";
-import { Client } from "./src/client/client.entity.ts";
-import { Product } from "./src/product/product.entity.ts";
-import { Order } from "./src/order/order.entity.ts";
-import { OrderDetail } from "./src/order/order-detail.entity.ts";
+import { User } from "src/user/user.entity";
+import { Client } from "src/client/client.entity";
+import { Product } from "src/product/product.entity";
+import { Order } from "src/order/order.entity";
+import { OrderDetail } from "src/order/order-detail.entity";
 
 config();
 
