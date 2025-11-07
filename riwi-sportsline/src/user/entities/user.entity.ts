@@ -33,8 +33,4 @@ export class User {
 
   @OneToMany(() => Order, (order) => order.user_id)
   orders: Order[];
-
-  @OneToOne(() => Order, (order) => order.usuario)
-  @JoinColumn() // indica dónde se guarda la FK
-  perfil: Perfil;
 }
