@@ -1,23 +1,21 @@
 import { Controller, Get, Post, Param, Body, Patch, Delete, Query, ParseIntPipe } from '@nestjs/common';
 import { ClientsService } from './clients.services';
-import { Client } from './client.entity';
+import { CreateClientDto, UpdateClientDto } from '../dtos/create-client.dto';
+import { PaginationDto } from '../dtos/pagination.dto';
 
 @Controller('clients')
 export class ClientsController {
   constructor(private readonly service: ClientsService) {}
 
   @Post()
-  create(@Body() dto: Partial<Client>) {
-    // dto: { documentNumber, name, email?, phone? }
+  create(@Body() dto: CreateClientDto) {
     return this.service.create(dto);
   }
 
   @Get()
-  findAll(
-    @Query('page') page: string = '1',
-    @Query('limit') limit: string = '10',
-  ) {
-    return this.service.findAll(+page, +limit);
+  findAll(@Query() query: PaginationDto) {
+    const { page, limit } = query;
+    return this.service.findAll(page, limit);
   }
 
   @Get(':id')
@@ -28,7 +26,7 @@ export class ClientsController {
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() dto: Partial<Client>,
+    @Body() dto: UpdateClientDto,
   ) {
     return this.service.update(id, dto);
   }
