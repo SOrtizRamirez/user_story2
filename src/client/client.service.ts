@@ -1,6 +1,44 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Client } from './client.entity';
+import { CreateClientDto } from './dto/create-client.dto';
+import { UpdateClientDto } from './dto/update-client.dto';
 
 @Injectable()
-export class ClientService {}
+export class ClientService {
+    constructor(
+        @InjectRepository(Client)
+        private clientRepo: Repository<Client>,
+    ) {}
 
-// HU3 - Tarea 1 - "Generar los módulos, controladores y servicios de usuario, producto y cliente." - LISTA.
+    async create(createClientDto: CreateClientDto): Promise<Client> {
+        const client = this.clientRepo.create(createClientDto);
+        return this.clientRepo.save(client);
+    }
+
+    async findAll(): Promise<Client[]> {
+        return this.clientRepo.find();
+    }
+
+    async findOne(id: number): Promise<Client> {
+        const client = await this.clientRepo.findOne({ where: { id } });
+        if (!client) {
+            throw new NotFoundException(`Client #${id} not found`);
+        }
+        return client;
+    }
+
+    async update(id: number, updateClientDto: UpdateClientDto): Promise<Client> {
+        const client = await this.findOne(id);
+        Object.assign(client, updateClientDto);
+        return this.clientRepo.save(client);
+    }
+
+    async remove(id: number): Promise<void> {
+        const result = await this.clientRepo.delete(id);
+        if (result.affected === 0) {
+            throw new NotFoundException(`Client #${id} not found`);
+        }
+    }
+}

@@ -1,20 +1,34 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { UserService } from './user.service';
-import { User } from './user.entity';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('user')
 export class UserController {
     constructor(private readonly userService: UserService) {}
 
     @Post()
-    create(@Body() data: Partial<User>) {
-        return this.userService.create(data);
+    create(@Body() dto: CreateUserDto) {
+        return this.userService.create(dto);
     }
 
     @Get()
     findAll() {
         return this.userService.findAll();
     }
-}
 
-// HU3 - Tarea 1 - "Generar los módulos, controladores y servicios de usuario, producto y cliente." - LISTA.
+    @Get(':id')
+    findOne(@Param() id: string) {
+        return this.userService.findOne(+id);
+    }
+
+    @Put(':id')
+    update(@Param() id: string, @Body() dto: UpdateUserDto) {
+        return this.userService.update(+id, dto);
+    }
+
+    @Delete(':id')
+    remove(@Param() id: string) {
+        return this.userService.remove(+id);
+    }
+}

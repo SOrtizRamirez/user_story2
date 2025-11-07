@@ -7,8 +7,7 @@ import { Client } from './client.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([Client])],
   controllers: [ClientController],
-  providers: [ClientService]
+  providers: [ClientService],
+  exports: [ClientService]
 })
 export class ClientModule {}
-
-// HU3 - Tarea 1 - "Generar los módulos, controladores y servicios de usuario, producto y cliente." - LISTA.

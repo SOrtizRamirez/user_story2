@@ -1,7 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { User } from './user.entity';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -10,14 +12,33 @@ export class UserService {
         private userRepo: Repository<User>,
     ) {}
     
-    create(data: Partial<User>) {
-        const user = this.userRepo.create(data);
+    async create(createUserDto: CreateUserDto): Promise<User> {
+        const user = this.userRepo.create(createUserDto);
         return this.userRepo.save(user);
     }
 
-    findAll() {
+    async findAll(): Promise<User[]> {
         return this.userRepo.find();
     }
-}
 
-// HU3 - Tarea 1 - "Generar los módulos, controladores y servicios de usuario, producto y cliente." - LISTA.
+    async findOne(id: number): Promise<User> {
+        const user = await this.userRepo.findOne({ where: { id } });
+        if (!user) {
+            throw new NotFoundException(`User #${id} not found`);
+        }
+        return user;
+    }
+
+    async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+        const user = await this.findOne(id);
+        Object.assign(user, updateUserDto);
+        return this.userRepo.save(user);
+    }
+
+    async remove(id: number): Promise<void> {
+        const result = await this.userRepo.delete(id);
+        if (result.affected === 0) {
+            throw new NotFoundException(`User #${id} not found`);
+        }
+    }
+}
