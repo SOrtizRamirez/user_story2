@@ -1,14 +1,7 @@
-import { Order } from 'src/order/entities/order.entity';
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  ManyToMany,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToMany } from 'typeorm';
+import { Order } from '../../order/entities/order.entity';
 
-@Entity({ name: 'products' })
+@Entity()
 export class Product {
   @PrimaryGeneratedColumn()
   id: number;
@@ -17,20 +10,12 @@ export class Product {
   name: string;
 
   @Column({ nullable: false })
+  price: number;
+
+  @Column({ nullable: true })
   description: string;
 
-  @Column({ nullable: false })
-  price: string;
-
-  @Column({ nullable: false })
-  stock: number;
-
-  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
-  createdAt: Date;
-
-  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
-  updatedAt: Date;
-
-  @ManyToMany(() => Order, (order) => order.product_id)
+  @ManyToMany(() => Order, (order) => order.products)
   orders: Order[];
 }
+
