@@ -8,17 +8,18 @@ import { ClientModule } from './client/client.module';
 import { ProductModule } from './product/product.module';
 import { OrderModule } from './order/order.module';
 import { envSchema } from './config/env.validation';
+import configuration from './config/configuration';
 
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true, // hace que esté disponible en toda la app
+      load: [configuration],
       validationSchema: envSchema,
-      envFilePath: '.env',
       }),
       TypeOrmModule.forRootAsync({ 
-        inject: [ConfigService],
+        imports: [ConfigModule],
         useFactory: (configService: ConfigService) => ({
           type: 'postgres',
           host: configService.get('DB_HOST'),
@@ -31,6 +32,7 @@ import { envSchema } from './config/env.validation';
           synchronize: configService.get<string>('NODE_ENV') !== 'production',
           logging: configService.get<string>('NODE_ENV') !== 'production',
         }),
+        inject: [ConfigService]
       }),
       UserModule,
       ClientModule,
