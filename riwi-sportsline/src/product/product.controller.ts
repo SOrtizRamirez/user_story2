@@ -14,6 +14,7 @@ import { UpdateProductDto } from "./dto/update-product.dto";
 
 @Controller('products')
 export class ProductController {
+  //Inyectamos el servicio
   constructor(private readonly productService: ProductService) {}
 
   @Get()
