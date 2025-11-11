@@ -13,6 +13,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 
 @Controller('users')
 export class UserController {
+  //Inyectamos el servicio
   constructor(private readonly userService: UserService) {}
 
   @Get()
