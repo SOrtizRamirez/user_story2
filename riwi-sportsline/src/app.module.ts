@@ -14,6 +14,7 @@ import { ProductModule } from './product/product.module';
 
 @Module({
   imports: [
+    //Centralizar variables
     //  Cargar variables de entorno (.env)
     ConfigModule.forRoot({
       isGlobal: true, // disponible en toda la app
