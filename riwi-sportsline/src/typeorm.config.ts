@@ -13,5 +13,5 @@ export const AppDataSource = new DataSource({
   database: 'ecomerce',
   entities: [User, Customer, Product, Order],
   migrations: ['dist/migrations/*.js'], // o 'src/migrations/*.ts' si usas ts-node
-  synchronize: false, // 🚫 importante: desactiva esto en producción
+  synchronize: false, // importante: desactiva esto en producción
 });
