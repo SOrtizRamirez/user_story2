@@ -10,8 +10,8 @@ export async function seedUsers(dataSource: DataSource) {
     }
 
     const users = userRepo.create([
-        { name: 'Admin', email: 'admin@mail.com', password: '123456' },
-        { name: 'Seller', email: 'seller@mail.com', password: '123456' },
+        { name: 'Admin', email: 'admin@mail.com', password: '123456', role: 'admin' },
+        { name: 'Seller', email: 'seller@mail.com', password: '123456', role: 'seller' },
     ]);
 
     await userRepo.save(users);
