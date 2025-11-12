@@ -142,7 +142,7 @@
  ## ✅ HU - 02 TAREA 4
 
 - POST
-![POST IMAGE](image.png)
+![POST IMAGE](imgs/image.png)
 
 - GET
-![GET IMAGE](image-1.png)
+![GET IMAGE](imgs/image2.png)
