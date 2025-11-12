@@ -1,9 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common'
+import { AuditMiddleware } from './common/audit/audit.middleware';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.use(new AuditMiddleware().use);
 
   app.useGlobalPipes(
     new ValidationPipe({

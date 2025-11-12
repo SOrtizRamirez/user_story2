@@ -15,7 +15,7 @@ export class User {
   @Column({ nullable: false })
   password: string;
 
-  @Column({ nullable: false })
+  @Column({ type: "enum", enum:['admin', 'user'], default:'user'})
   role: string;
   
   @OneToMany(() => Order, (order) => order.user)

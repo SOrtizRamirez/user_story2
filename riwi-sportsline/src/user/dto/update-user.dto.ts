@@ -1,4 +1,4 @@
-import { IsOptional, IsString, IsEmail } from 'class-validator';
+import { IsOptional, IsString, IsEmail, IsEnum } from 'class-validator';
 
 export class UpdateUserDto {
   
@@ -15,6 +15,7 @@ export class UpdateUserDto {
   password?: string;
 
   @IsOptional()
+  @IsEnum(['admin', 'user'], { message: 'debesr algunos de los dos'})
   @IsString({ message: 'El estado debe ser un texto' })
   role?: string;
 }
