@@ -1,32 +1,31 @@
-import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsersModule } from './users/users.module';
 import { ProductsModule } from './products/products.module';
-import { ClientsModule } from './clients/client.module';
 import { OrdersModule } from './orders/orders.module';
-import { typeOrmConfig } from './database/typeorm.config';
-import { AuditMiddleware } from './common/middlewares/audit.middleware';
-import { ContentTypeValidationMiddleware } from './common/middlewares/content-type.middleware';
-import { APP_FILTER } from '@nestjs/core';
-import { HttpErrorFilter } from './common/filters/http-exception.filter';
-
+import { ClientsModule } from './clients/client.module';
+import { UsersModule } from './users/users.module';
+import { Product } from './products/product.entity';
+import { Order } from './orders/orders.entity';
+import { OrderItem } from './orders/order-item.entity';
+import { Client } from './clients/client.entity';
+import { User } from './users/user.entity';
+import 'dotenv/config';
 @Module({
   imports: [
-    TypeOrmModule.forRoot(typeOrmConfig),
-    UsersModule,
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: 'localhost',
+      port: Number(process.env.DB_PORT) || 5432,
+      username: process.env.DB_USER || 'sharon',
+      password: process.env.DB_PASSWORD|| '0619!',
+      database: process.env.DB_NAME || 'riwi_sportsline',
+      entities: [Product, Order, OrderItem, Client, User],
+      synchronize: true,
+    }),
     ProductsModule,
-    ClientsModule,
     OrdersModule,
+    ClientsModule,
+    UsersModule,
   ],
-  providers: [
-    {
-      provide: APP_FILTER,
-      useClass: HttpErrorFilter,
-    }
-  ]
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AuditMiddleware, ContentTypeValidationMiddleware).forRoutes('*');
-  }
-}
+export class AppModule {}

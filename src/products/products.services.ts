@@ -1,41 +1,36 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { ProductsRepository } from './products.repository';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { Product } from './product.entity';
 
 @Injectable()
 export class ProductsService {
-  constructor(private readonly repo: ProductsRepository) {}
+  constructor(
+    @InjectRepository(Product)
+    private readonly productsRepository: Repository<Product>,
+  ) {}
 
-  async create(dto: Partial<Product>) {
-    const entity = this.repo.create(dto);
-    return this.repo.save(entity);
+  async findAll(): Promise<Product[]> {
+    return this.productsRepository.find();
   }
 
-  async findAll(page = 1, limit = 10) {
-    return this.repo.findActivePaginated(page, limit);
+  async findOne(id: number): Promise<Product> {
+    const product = await this.productsRepository.findOne({ where: { id } });
+    if (!product) throw new NotFoundException(`Product ${id} not found`);
+    return product;
   }
 
-  async findOne(id: number) {
-    const item = await this.repo.findOne({ where: { id } });
-    if (!item) throw new NotFoundException('Product not found');
-    return item;
+  async create(data: Partial<Product>): Promise<Product> {
+    const product = this.productsRepository.create(data);
+    return this.productsRepository.save(product);
   }
 
-  async update(id: number, dto: Partial<Product>) {
-    await this.ensureExists(id);
-    await this.repo.update(id, dto);
+  async update(id: number, data: Partial<Product>): Promise<Product> {
+    await this.productsRepository.update(id, data);
     return this.findOne(id);
   }
 
-  async softDisable(id: number) {
-    await this.ensureExists(id);
-    await this.repo.update(id, { isActive: false });
-    return { ok: true };
-  }
-
-  // Util
-  private async ensureExists(id: number) {
-    const exists = await this.repo.exist({ where: { id } });
-    if (!exists) throw new NotFoundException('Product not found');
+  async remove(id: number): Promise<void> {
+    await this.productsRepository.delete(id);
   }
 }
