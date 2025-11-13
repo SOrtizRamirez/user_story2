@@ -6,11 +6,14 @@ import {
   Delete,
   Param,
   Body,
+  UseFilters,
 } from '@nestjs/common';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import { HttpExceptionFilter } from '../common/filters/http-exception.filter';
 
+//@UseFilters(HttpExceptionFilter) // ← se aplica solo a este controlador
 @Controller('users')
 export class UserController {
   //Inyectamos el servicio
