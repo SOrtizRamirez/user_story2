@@ -7,6 +7,7 @@ import {
   Param,
   Body,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Customer } from './entities/customer.entity';
 import { CustomerService } from './customer.service';
@@ -14,9 +15,11 @@ import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from "./dto/update-customer.dto";
 import { Roles } from '../common/decorators/roles.decorator'
 import { RolesGuard } from '../common/guards/roles.guard';
+import { LoggingInterceptor } from 'src/common/interceptors/logging.interceptor';
 
 
 @Controller('customers')
+@UseInterceptors(LoggingInterceptor) // se aplica a todo el controlador
 @UseGuards(RolesGuard)
 export class CustomerController {
   //Inyectamos el servicio

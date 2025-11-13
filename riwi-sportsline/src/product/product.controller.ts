@@ -7,6 +7,7 @@ import {
   Param,
   Body,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Product } from './entities/product.entity';
 import { ProductService } from './product.service';
@@ -14,8 +15,10 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from "./dto/update-product.dto";
 import { Roles } from '../common/decorators/roles.decorator'
 import { RolesGuard } from '../common/guards/roles.guard';
+import { LoggingInterceptor } from 'src/common/interceptors/logging.interceptor';
 
 @Controller('products')
+@UseInterceptors(LoggingInterceptor) // se aplica a todo el controlador
 @UseGuards(RolesGuard)
 export class ProductController {
   //Inyectamos el servicio
