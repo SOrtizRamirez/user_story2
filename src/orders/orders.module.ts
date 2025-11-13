@@ -5,7 +5,7 @@ import { Order } from './orders.entity';
 import { OrderItem } from './order-item.entity';
 import { OrdersRepository } from './orders.repository';
 import { OrdersService } from './orders.services';
-import { OrdersController } from './orders.controller';
+import { OrdersController } from './orders.controllers';
 
 import { ProductsModule } from '../products/products.module';
 import { ClientsModule } from '../clients/client.module';

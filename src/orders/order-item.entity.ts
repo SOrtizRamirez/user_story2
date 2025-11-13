@@ -1,25 +1,34 @@
 // src/orders/order-item.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+} from 'typeorm';
 import { Order } from './orders.entity';
 import { Product } from '../products/product.entity';
 
 @Entity('order_items')
 export class OrderItem {
   @PrimaryGeneratedColumn()
-  id?: number;
+  id!: number;
 
   @ManyToOne(() => Order, (order) => order.items, { onDelete: 'CASCADE' })
-  order?: Order;
+  order!: Order;
 
-  @ManyToOne(() => Product, (product) => product.orderItems, { eager: true, onDelete: 'RESTRICT' })
-  product?: Product;
+  @ManyToOne(
+    () => Product,
+    (product) => product.orderItems,
+    { eager: true, onDelete: 'RESTRICT' },
+  )
+  product!: Product;
 
   @Column('int')
-  quantity?: number;
+  quantity!: number;
 
   @Column('numeric', { precision: 12, scale: 2 })
-  unitPrice?: string;
+  unitPrice!: string;
 
   @Column('numeric', { precision: 12, scale: 2 })
-  lineTotal?: string;
+  lineTotal!: string;
 }

@@ -1,36 +1,29 @@
+// src/users/user.entity.ts
 import {
-  Entity, PrimaryGeneratedColumn, Column,
-  CreateDateColumn, UpdateDateColumn, OneToMany
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
 } from 'typeorm';
-
 import { Order } from '../orders/orders.entity';
-
-export type UserRole = 'admin' | 'customer' | 'analyst';
 
 @Entity('users')
 export class User {
-  @PrimaryGeneratedColumn('uuid')
-  id!: string;
+  @PrimaryGeneratedColumn()
+  id!: number;
 
-  @Column({ type: 'varchar', length: 150 })
+  @Column()
+  name!: string;
+
+  @Column({ unique: true })
   email!: string;
 
-  @Column({ name: 'password_hash', type: 'varchar', length: 255 })
-  passwordHash!: string;
+  @Column()
+  password!: string;
 
-  @Column({ type: 'varchar', length: 20, default: 'customer' })
-  role!: UserRole;
+  @Column({ default: 'customer' })
+  role!: string;
 
-  @CreateDateColumn({ name: 'created_at' })
-  createdAt!: Date;
-
-  @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt!: Date;
-
-  @Column({ type: 'boolean', default: true })
-  active!: boolean;
-
-  @OneToMany(() => Order, (order) => order.user, { cascade: false })
+  @OneToMany(() => Order, (order) => order.user)
   orders!: Order[];
 }
-

@@ -1,24 +1,18 @@
 // src/database/typeorm.config.ts
-import { TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { DataSourceOptions } from 'typeorm';
+import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { User } from '../users/user.entity';
+import { Client } from '../clients/client.entity';
+import { Product } from '../products/product.entity';
+import { Order } from '../orders/orders.entity';
+// agrega aquí todas tus entidades
 
-export const typeOrmAsyncConfig: TypeOrmModuleAsyncOptions = {
-  imports: [ConfigModule],       
-  inject: [ConfigService],
-  useFactory: (config: ConfigService) => {
-    const isProd = config.get('NODE_ENV') === 'production';
-    return {
-      type: 'postgres',
-      host: config.get<string>('DB_HOST', 'localhost'),
-      port: Number(config.get<string>('DB_PORT', '5432')),
-      username: config.get<string>('DB_USERNAME', 'postgres'),
-      password: config.get<string>('DB_PASSWORD', 'postgres'),
-      database: config.get<string>('DB_NAME', 'riwi_sportsline'),
-      entities: [User],
-      synchronize: !isProd,   // true en dev, migraciones en prod
-      logging: !isProd,
-    } as DataSourceOptions;
-  },
+export const typeOrmConfig: TypeOrmModuleOptions = {
+  type: 'postgres',
+  host: process.env.DB_HOST || 'localhost',
+  port: Number(process.env.DB_PORT) || 5432,
+  username: process.env.DB_USERNAME || 'sharon',
+  password: process.env.DB_PASSWORD || '0619!',
+  database: process.env.DB_NAME || 'riwi_sportline',
+  entities: [User, Client, Product, Order],
+  synchronize: false, // en producción SIEMPRE false
 };

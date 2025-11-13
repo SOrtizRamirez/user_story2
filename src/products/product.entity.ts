@@ -5,24 +5,24 @@ import { OrderItem } from '../orders/order-item.entity';
 @Entity('products')
 export class Product {
   @PrimaryGeneratedColumn()
-  id?: number;
+  id!: number;
 
   @Index()
   @Column({ unique: true })
-  sku?: string;
+  sku!: string;
 
   @Column()
-  name?: string;
+  name!: string;
 
   @Column('text', { nullable: true })
-  description?: string;
+  description!: string;
 
   @Column('numeric', { precision: 12, scale: 2 })
-  price?: string;
+  price!: string;
 
   @Column({ default: true })
-  isActive?: boolean;
+  isActive!: boolean;
 
   @OneToMany(() => OrderItem, (item) => item.product)
-  orderItems?: OrderItem[];
+  orderItems!: OrderItem[];
 }

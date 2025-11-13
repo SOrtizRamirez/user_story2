@@ -1,15 +1,23 @@
+// src/database/datasource.ts
 import 'dotenv/config';
 import { DataSource } from 'typeorm';
+import { User } from '../users/user.entity';
+import { Client } from '../clients/client.entity';
+import { Product } from '../products/product.entity';
+import { Order } from '../orders/orders.entity';
+import { OrderItem } from '../orders/order-item.entity';
 
-export default new DataSource({
+const AppDataSource = new DataSource({
   type: 'postgres',
-  host: process.env.DB_HOST,
-  port: +(process.env.DB_PORT || 5432),
-  username: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME,
-  synchronize: false,         // ¡importante en prod: false!
+  host: process.env.DB_HOST ?? 'localhost',
+  port: Number(process.env.DB_PORT) || 5432,
+  username: process.env.DB_USERNAME ?? 'sharon',
+  password: process.env.DB_PASSWORD ?? '0619!',
+  database: process.env.DB_NAME ?? 'riwi_sportsline',
+  entities: [User, Product, Order, OrderItem, Client],
+  migrations: ['src/migrations/*.ts'],
+  synchronize: false,
   logging: true,
-  entities: ['dist/**/*.entity.js'],
-  migrations: ['dist/migrations/*.js'],
 });
+
+export default AppDataSource;
