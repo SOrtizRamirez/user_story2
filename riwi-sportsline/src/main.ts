@@ -2,11 +2,13 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common'
 import { AuditMiddleware } from './common/audit/audit.middleware';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.use(new AuditMiddleware().use);
+  app.useGlobalFilters(new HttpExceptionFilter())
 
   app.useGlobalPipes(
     new ValidationPipe({
