@@ -9,7 +9,13 @@ import { Order } from './orders/orders.entity';
 import { OrderItem } from './orders/order-item.entity';
 import { Client } from './clients/client.entity';
 import { User } from './users/user.entity';
+import { MiddlewareConsumer, NestModule } from '@nestjs/common';
+import {AuditMiddleware } from '../src/common/middlewares/audit.middleware';
+import {  ContentTypeValidationMiddleware } from '../src/common/middlewares/content-type.middleware';
+import { APP_FILTER } from '@nestjs/core';
+import { HttpErrorFilter } from '../src/common/filters/http-exception.filter'
 import 'dotenv/config';
+
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -26,6 +32,18 @@ import 'dotenv/config';
     OrdersModule,
     ClientsModule,
     UsersModule,
+    
   ],
+
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: HttpErrorFilter,
+    },
+  ]
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AuditMiddleware, ContentTypeValidationMiddleware).forRoutes('*');
+  }
+}
