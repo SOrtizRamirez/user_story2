@@ -6,7 +6,7 @@ import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 
 @Controller('products')
-@UseGuards(RolesGuard)
+// @UseGuards(RolesGuard)
 export class ProductController {
     constructor(private readonly productService: ProductService) {}
 
