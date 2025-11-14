@@ -14,6 +14,7 @@ import {AuditMiddleware } from '../src/common/middlewares/audit.middleware';
 import {  ContentTypeValidationMiddleware } from '../src/common/middlewares/content-type.middleware';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpErrorFilter } from '../src/common/filters/http-exception.filter'
+import { AuthModule } from './auth/auth.module';
 import 'dotenv/config';
 
 @Module({
@@ -32,6 +33,7 @@ import 'dotenv/config';
     OrdersModule,
     ClientsModule,
     UsersModule,
+    AuthModule,
     
   ],
 

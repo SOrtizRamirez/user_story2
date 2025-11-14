@@ -12,6 +12,9 @@ export class CreateUserDto {
   @IsString()
   @MinLength(6)
   password!: string;
+
+  @IsString()
+  refreshTokenHash
 }
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {}
