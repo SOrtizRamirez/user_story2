@@ -1,5 +1,5 @@
 import { Injectable, UnauthorizedException, ForbiddenException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.services';
 import { ConfigService } from '@nestjs/config';
@@ -20,19 +20,24 @@ export class AuthService {
       role: user.role,
     };
 
-    return this.jwt.sign(payload, {
-      secret: this.config.get<string>('JWT_SECRET'),
-      expiresIn: this.config.get<string>('JWT_EXPIRES_IN') || '15m',
-    });
+    const options: JwtSignOptions = {
+      secret: this.config.get<string>('JWT_SECRET')!,          // sin espacio
+      expiresIn: Number(this.config.get<string>('JWT_EXPIRES_IN') || '15m'),
+    };
+
+    return this.jwt.sign(payload, options);
   }
 
   private getRefreshToken(user: User): string {
     const payload = { sub: user.id };
 
-    return this.jwt.sign(payload, {
-      secret: this.config.get<string>('JWT_REFRESH_SECRET'),
-      expiresIn: this.config.get<string>('JWT_REFRESH_EXPIRES_IN') || '7d',
-    });
+    const options: JwtSignOptions = {
+      secret: this.config.get<string>('JWT_REFRESH_SECRET')!,
+      expiresIn:
+        Number(this.config.get<string>('JWT_REFRESH_EXPIRES_IN') || '7d'),
+    };
+
+    return this.jwt.sign(payload, options);
   }
 
   async login(user: User) {
@@ -46,7 +51,7 @@ export class AuthService {
   }
 
   async refreshTokens(userId: number, refreshToken: string) {
-    const user = await this.usersService.findByPk(userId);
+    const user = await this.usersService.findById(userId);
     if (!user || !user.refreshTokenHash) {
       throw new ForbiddenException('Acceso denegado');
     }
@@ -60,11 +65,31 @@ export class AuthService {
     const newHash = await bcrypt.hash(newRefreshToken, 10);
     await this.usersService.update(user.id, { refreshTokenHash: newHash });
 
-    return { accessToken: newAccessToken, refreshToken: newRefreshToken };
+    return {
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+    };
+  }
+
+  async validateUser(email: string, password: string): Promise<User> {
+    // Buscamos al usuario por email en la BD
+    const user = await this.usersService.findByEmail(email);
+    if (!user) {
+      throw new UnauthorizedException('Credenciales inválidas');
+    }
+
+    // Comparamos la contraseña plana con el hash guardado
+    const passwordMatches = await bcrypt.compare(password, user.password);
+    if (!passwordMatches) {
+      throw new UnauthorizedException('Credenciales inválidas');
+    }
+
+    // Si todo bien, devolvemos el user (lo usas en login)
+    return user;
   }
 
   async logout(userId: number) {
-    await this.usersService.update(userId, { refreshTokenHash: null });
+    await this.usersService.update(userId, { refreshTokenHash: undefined });
     return { message: 'Sesión cerrada' };
   }
 }
