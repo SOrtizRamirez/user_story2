@@ -19,7 +19,6 @@ import 'dotenv/config';
 
 @Module({
   imports: [
-    
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
@@ -35,7 +34,6 @@ import 'dotenv/config';
     ClientsModule,
     UsersModule,
     AuthModule,
-    
   ],
 
   providers: [
@@ -43,7 +41,7 @@ import 'dotenv/config';
       provide: APP_FILTER,
       useClass: HttpErrorFilter,
     },
-  ]
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

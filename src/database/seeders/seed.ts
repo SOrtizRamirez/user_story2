@@ -162,7 +162,7 @@ async function seedOrders() {
   const clients = await clientRepo.find();
   const products = await productRepo.find();
   const seller = await userRepo.findOne({
-    where: { role: Role.SELLER }, // ajusta si tu enum/prop es distinto
+    where: { role: Role.SELLER }, 
   });
 
   if (clients.length < 2 || products.length < 5 || !seller) {

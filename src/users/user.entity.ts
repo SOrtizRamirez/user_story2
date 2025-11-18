@@ -7,7 +7,8 @@ import {
   JoinColumn
 } from 'typeorm';
 import { Order } from '../orders/orders.entity';
-import { Role } from '../roles/role.entity';
+import { Role } from '../common/enums/role.enum';
+
 
 @Entity('users')
 export class User {
@@ -23,11 +24,12 @@ export class User {
   @Column()
   password!: string;
 
-  @ManyToOne(() => Role, (role) => role.users, {
-    nullable: false,
-    eager: true,
+  @Column({
+  type: 'enum',
+  enum: Role,
+  default: Role.CLIENT
   })
-  @JoinColumn({ name: 'role_id' })
+  @JoinColumn({ name: 'role' })
   role!: Role;
 
   @Column({ nullable: true })
@@ -35,4 +37,5 @@ export class User {
 
   @OneToMany(() => Order, (order) => order.user)
   orders!: Order[];
+
 }

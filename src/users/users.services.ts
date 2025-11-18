@@ -12,13 +12,10 @@ export class UsersService {
     private readonly repo: Repository<User>,
   ) {}
 
-  // para el controlador (PATCH /users/:id)
   async updateFromDto(id: number, dto: UpdateUserDto) {
     await this.repo.update(id, dto);
     return this.findById(id);
   }
-
-  // para uso interno (auth, refresh token, etc.)
   async update(id: number, data: Partial<User>) {
     await this.repo.update(id, data);
     return this.findById(id);
@@ -35,6 +32,18 @@ export class UsersService {
   async create(data: Partial<User>) {
     const user = this.repo.create(data);
     return this.repo.save(user);
+  }
+
+  async findAll() {
+    return this.repo.find();
+  }
+  
+  async remove(id: number) {
+    const user = await this.findById(id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return this.repo.remove(user);
   }
 }
 

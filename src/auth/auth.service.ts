@@ -21,7 +21,7 @@ export class AuthService {
     };
 
     const options: JwtSignOptions = {
-      secret: this.config.get<string>('JWT_SECRET')!,          // sin espacio
+      secret: this.config.get<string>('JWT_SECRET')!, 
       expiresIn: Number(this.config.get<string>('JWT_EXPIRES_IN') || '15m'),
     };
 
@@ -43,10 +43,8 @@ export class AuthService {
   async login(user: User) {
     const accessToken = this.getAccessToken(user);
     const refreshToken = this.getRefreshToken(user);
-
     const hash = await bcrypt.hash(refreshToken, 10);
     await this.usersService.update(user.id, { refreshTokenHash: hash });
-
     return { accessToken, refreshToken };
   }
 
@@ -72,19 +70,15 @@ export class AuthService {
   }
 
   async validateUser(email: string, password: string): Promise<User> {
-    // Buscamos al usuario por email en la BD
     const user = await this.usersService.findByEmail(email);
     if (!user) {
       throw new UnauthorizedException('Credenciales inválidas');
     }
 
-    // Comparamos la contraseña plana con el hash guardado
     const passwordMatches = await bcrypt.compare(password, user.password);
     if (!passwordMatches) {
       throw new UnauthorizedException('Credenciales inválidas');
     }
-
-    // Si todo bien, devolvemos el user (lo usas en login)
     return user;
   }
 
@@ -92,4 +86,6 @@ export class AuthService {
     await this.usersService.update(userId, { refreshTokenHash: undefined });
     return { message: 'Sesión cerrada' };
   }
+
+  
 }
