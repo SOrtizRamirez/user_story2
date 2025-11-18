@@ -63,18 +63,21 @@ async function seedClients() {
 
   const clientsData = [
     {
+      documentNumber: "123456789",
       name: 'Juan Pérez',
       email: 'juan.perez@example.com',
       phone: '+57 3001234567',
       address: 'Calle 10 # 20-30, Medellín',
     },
     {
+      documentNumber: "987654321",
       name: 'María Gómez',
       email: 'maria.gomez@example.com',
       phone: '+57 3019876543',
       address: 'Carrera 45 # 50-60, Medellín',
     },
     {
+      documentNumber: "1122334455",
       name: 'Equipo Atlético Medellín',
       email: 'contacto@atlmedellin.com',
       phone: '+57 3025556677',
@@ -99,39 +102,41 @@ async function seedProducts() {
 
   const productsData = [
     {
+      sku: 'CRP-001',
       name: 'Camiseta Running Pro',
       description: 'Camiseta deportiva ligera para running con tecnología dry-fit.',
       price: '120000',
-      stock: '50',
-      category: 'Ropa',
+      isActive: true
     },
     {
+      sku: 'PTF-002',
       name: 'Pantaloneta Training Flex',
       description: 'Pantaloneta elástica para entrenamientos de alta intensidad.',
       price: '90000',
-      stock: '40',
-      category: 'Ropa',
+      isActive: true
     },
     {
+      sku: 'BFR-003',
       name: 'Balón Fútbol Pro Riwi',
       description: 'Balón profesional tamaño 5 para césped natural.',
       price: '150000',
-      stock: '30',
       category: 'Accesorios',
+      isActive: true
     },
     {
+      sku: 'TRU-004',
       name: 'Tenis Running UltraLight',
       description: 'Zapatillas para running con amortiguación avanzada.',
       price: '280000',
       stock: '25',
-      category: 'Calzado',
+      isActive: true
     },
     {
+      sku: 'GGG-005',
       name: 'Guantes Gym Grip',
       description: 'Guantes para levantamiento de pesas con agarre reforzado.',
       price: '60000',
-      stock: '60',
-      category: 'Accesorios',
+      isActive: true
     },
   ];
 
@@ -172,7 +177,7 @@ async function seedOrders() {
   const order1 = orderRepo.create({
     client: client1,
     user: seller,
-    total: '0', 
+    total: '0',
   });
 
   const order2 = orderRepo.create({
@@ -185,28 +190,28 @@ async function seedOrders() {
 
   const itemsData = [
     {
-      order: order1, 
+      quantity: 2,
+      order: order1,
       product: products[0],
-      quantity: 2, 
-      price: products[0].price,
+      unitPrice: products[0].price,
     },
     {
+      quantity: 1,
       order: order1,
       product: products[2],
-      quantity: 1,
-      price: products[2].price,
+      unitPrice: products[2].price,
     },
     {
+      quantity: 1,
       order: order2,
       product: products[3],
-      quantity: 1,
-      price: products[3].price,
+      unitPrice: products[3].price,
     },
     {
+      quantity: 2,
       order: order2,
       product: products[4],
-      quantity: 2,
-      price: products[4].price,
+      unitPrice: products[4].price,
     },
   ];
 
@@ -219,7 +224,6 @@ async function seedOrders() {
 
   for (const order of ordersWithItems) {
     const totalNumber = order.items.reduce((sum, item: any) => {
-      // aquí asumo que item.price es número o string-número
       const price = Number(item.price);
       const quantity = Number(item.quantity);
       return sum + price * quantity;
@@ -233,21 +237,21 @@ async function seedOrders() {
 }
 
 async function runSeed() {
-    try {
-        await dataSource.initialize();
-        console.log('📦 Iniciando seed de Riwi SportsLine...');
+  try {
+    await dataSource.initialize();
+    console.log('📦 Iniciando seed de Riwi SportsLine...');
 
-        await seedUsers();
-        await seedClients();
-        await seedProducts();
-        await seedOrders();
+    await seedUsers();
+    await seedClients();
+    await seedProducts();
+    await seedOrders();
 
-        console.log('🎉 Seeds completados correctamente');
-    } catch (error) {
-        console.error('❌ Error ejecutando seeds', error);
-    } finally {
-        await dataSource.destroy();
-    }
+    console.log('🎉 Seeds completados correctamente');
+  } catch (error) {
+    console.error('❌ Error ejecutando seeds', error);
+  } finally {
+    await dataSource.destroy();
+  }
 }
 
 runSeed();

@@ -21,7 +21,8 @@
     "typeorm": "TS_NODE_TRANSPILE_ONLY=true node -r ts-node/register ./node_modules/typeorm/cli.js",
     "migration:generate": "npm run typeorm -- migration:generate src/database/migrations/Init -d src/database/datasource.ts",
     "migration:run": "npm run typeorm -- migration:run -d src/database/datasource.ts",
-    "migration:revert": "npm run typeorm migration:revert"
+    "migration:revert": "npm run typeorm migration:revert",
+    "seed": "ts-node -r tsconfig-paths/register src/database/seeders/seed.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
