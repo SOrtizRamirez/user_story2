@@ -211,7 +211,7 @@ async function seedOrders() {
   ];
 
   const orderItems = itemsData.map((data) =>
-    orderItemRepo.create(data as any),
+    orderItemRepo.create(data),
   );
 
   await orderItemRepo.save(orderItems);
