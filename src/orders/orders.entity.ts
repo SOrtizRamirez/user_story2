@@ -26,7 +26,7 @@ export class Order {
     nullable: true,
     onDelete: 'CASCADE',
   })
-  user!: User; // vendedor que registró la orden
+  user!: User;
 
   @OneToMany(() => OrderItem, (item) => item.order, {
     cascade: true,

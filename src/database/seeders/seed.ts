@@ -1,0 +1,253 @@
+// src/database/seeds/seed.ts
+import 'reflect-metadata';
+import dataSource from '../datasource';
+import { User } from '../../users/user.entity';
+import { Client } from '../../clients/client.entity';
+import { Product } from '../../products/product.entity';
+import { Order } from '../../orders/orders.entity';
+import { OrderItem } from '../../orders/order-item.entity';
+import { Role } from '../../common/enums/role.enum';
+import * as bcrypt from 'bcrypt';
+
+async function seedUsers() {
+  const userRepo = dataSource.getRepository(User);
+
+  const count = await userRepo.count();
+  if (count > 0) {
+    console.log('Users ya tienen datos, saltando...');
+    return;
+  }
+
+  const passwordAdmin = await bcrypt.hash('Admin123*', 10);
+  const passwordSeller = await bcrypt.hash('Seller123*', 10);
+  const passwordCustomer = await bcrypt.hash('Customer123*', 10);
+
+  const usersData = [
+    {
+      name: 'Admin Riwi',
+      email: 'admin@riwisportsline.com',
+      password: passwordAdmin,
+      role: Role.ADMIN,
+      isActive: true,
+    },
+    {
+      name: 'Vendedor 1',
+      email: 'seller1@riwisportsline.com',
+      password: passwordSeller,
+      role: Role.SELLER,
+      isActive: true,
+    },
+    {
+      name: 'Cliente Interno',
+      email: 'customer1@riwisportsline.com',
+      password: passwordCustomer,
+      role: Role.CLIENT,
+      isActive: true,
+    },
+  ];
+
+  const users = usersData.map((data) => userRepo.create(data));
+  await userRepo.save(users);
+
+  console.log('✅ Users sembrados');
+}
+
+async function seedClients() {
+  const clientRepo = dataSource.getRepository(Client);
+
+  const count = await clientRepo.count();
+  if (count > 0) {
+    console.log('Clients ya tienen datos, saltando...');
+    return;
+  }
+
+  const clientsData = [
+    {
+      name: 'Juan Pérez',
+      email: 'juan.perez@example.com',
+      phone: '+57 3001234567',
+      address: 'Calle 10 # 20-30, Medellín',
+    },
+    {
+      name: 'María Gómez',
+      email: 'maria.gomez@example.com',
+      phone: '+57 3019876543',
+      address: 'Carrera 45 # 50-60, Medellín',
+    },
+    {
+      name: 'Equipo Atlético Medellín',
+      email: 'contacto@atlmedellin.com',
+      phone: '+57 3025556677',
+      address: 'Estadio Atanasio Girardot, Medellín',
+    },
+  ];
+
+  const clients = clientsData.map((data) => clientRepo.create(data));
+  await clientRepo.save(clients);
+
+  console.log('✅ Clients sembrados');
+}
+
+async function seedProducts() {
+  const productRepo = dataSource.getRepository(Product);
+
+  const count = await productRepo.count();
+  if (count > 0) {
+    console.log('Products ya tienen datos, saltando...');
+    return;
+  }
+
+  const productsData = [
+    {
+      name: 'Camiseta Running Pro',
+      description: 'Camiseta deportiva ligera para running con tecnología dry-fit.',
+      price: '120000',
+      stock: '50',
+      category: 'Ropa',
+    },
+    {
+      name: 'Pantaloneta Training Flex',
+      description: 'Pantaloneta elástica para entrenamientos de alta intensidad.',
+      price: '90000',
+      stock: '40',
+      category: 'Ropa',
+    },
+    {
+      name: 'Balón Fútbol Pro Riwi',
+      description: 'Balón profesional tamaño 5 para césped natural.',
+      price: '150000',
+      stock: '30',
+      category: 'Accesorios',
+    },
+    {
+      name: 'Tenis Running UltraLight',
+      description: 'Zapatillas para running con amortiguación avanzada.',
+      price: '280000',
+      stock: '25',
+      category: 'Calzado',
+    },
+    {
+      name: 'Guantes Gym Grip',
+      description: 'Guantes para levantamiento de pesas con agarre reforzado.',
+      price: '60000',
+      stock: '60',
+      category: 'Accesorios',
+    },
+  ];
+
+  const products = productsData.map((data) => productRepo.create(data));
+  await productRepo.save(products);
+
+  console.log('✅ Products sembrados');
+}
+
+async function seedOrders() {
+  const orderRepo = dataSource.getRepository(Order);
+  const orderItemRepo = dataSource.getRepository(OrderItem);
+  const clientRepo = dataSource.getRepository(Client);
+  const userRepo = dataSource.getRepository(User);
+  const productRepo = dataSource.getRepository(Product);
+
+  const count = await orderRepo.count();
+  if (count > 0) {
+    console.log('Orders ya tienen datos, saltando...');
+    return;
+  }
+
+  const clients = await clientRepo.find();
+  const products = await productRepo.find();
+  const seller = await userRepo.findOne({
+    where: { role: Role.SELLER }, // ajusta si tu enum/prop es distinto
+  });
+
+  if (clients.length < 2 || products.length < 5 || !seller) {
+    console.warn(
+      'No hay suficientes datos para crear orders. Asegúrate de haber corrido seedUsers, seedClients y seedProducts primero.',
+    );
+    return;
+  }
+
+  const [client1, client2] = clients;
+
+  const order1 = orderRepo.create({
+    client: client1,
+    user: seller,
+    total: '0', 
+  });
+
+  const order2 = orderRepo.create({
+    client: client2,
+    user: seller,
+    total: '0',
+  });
+
+  await orderRepo.save([order1, order2]);
+
+  const itemsData = [
+    {
+      order: order1, 
+      product: products[0],
+      quantity: 2, 
+      price: products[0].price,
+    },
+    {
+      order: order1,
+      product: products[2],
+      quantity: 1,
+      price: products[2].price,
+    },
+    {
+      order: order2,
+      product: products[3],
+      quantity: 1,
+      price: products[3].price,
+    },
+    {
+      order: order2,
+      product: products[4],
+      quantity: 2,
+      price: products[4].price,
+    },
+  ];
+
+  const orderItems = itemsData.map((data) =>
+    orderItemRepo.create(data as any),
+  );
+
+  await orderItemRepo.save(orderItems);
+  const ordersWithItems = await orderRepo.find(); // eager:true ya trae items
+
+  for (const order of ordersWithItems) {
+    const totalNumber = order.items.reduce((sum, item: any) => {
+      // aquí asumo que item.price es número o string-número
+      const price = Number(item.price);
+      const quantity = Number(item.quantity);
+      return sum + price * quantity;
+    }, 0);
+
+    order.total = totalNumber.toFixed(2); // string con 2 decimales
+    await orderRepo.save(order);
+  }
+
+  console.log('✅ Orders y OrderItems sembrados');
+}
+
+async function runSeed() {
+    try {
+        await dataSource.initialize();
+        console.log('📦 Iniciando seed de Riwi SportsLine...');
+
+        await seedUsers();
+        await seedClients();
+        await seedProducts();
+        await seedOrders();
+
+        console.log('🎉 Seeds completados correctamente');
+    } catch (error) {
+        console.error('❌ Error ejecutando seeds', error);
+    } finally {
+        await dataSource.destroy();
+    }
+}
+
+runSeed();
