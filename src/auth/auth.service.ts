@@ -11,18 +11,17 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly jwt: JwtService,
     private readonly config: ConfigService,
-  ) {}
+  ) { }
 
   private getAccessToken(user: User): string {
-    const payload = {
-      sub: user.id,
-      email: user.email,
-      role: user.role,
-    };
+    const payload = { sub: user.id, email: user.email, role: user.role };
+
+    const expiresInConfig = this.config.get<string>('JWT_EXPIRES_IN');
+    const expiresIn = expiresInConfig ? Number(expiresInConfig) : 900;
 
     const options: JwtSignOptions = {
-      secret: this.config.get<string>('JWT_SECRET')!, 
-      expiresIn: Number(this.config.get<string>('JWT_EXPIRES_IN') || '15m'),
+      secret: this.config.get<string>('JWT_SECRET') || 'default_access_secret',
+      expiresIn,
     };
 
     return this.jwt.sign(payload, options);
@@ -31,20 +30,25 @@ export class AuthService {
   private getRefreshToken(user: User): string {
     const payload = { sub: user.id };
 
+    const refreshExpiresConfig = this.config.get<string>('JWT_REFRESH_EXPIRES_IN');
+    const expiresIn = refreshExpiresConfig ? Number(refreshExpiresConfig) : 604800;
+
     const options: JwtSignOptions = {
-      secret: this.config.get<string>('JWT_REFRESH_SECRET')!,
-      expiresIn:
-        Number(this.config.get<string>('JWT_REFRESH_EXPIRES_IN') || '7d'),
+      secret: this.config.get<string>('JWT_REFRESH_SECRET') || 'default_refresh_secret',
+      expiresIn,
     };
 
     return this.jwt.sign(payload, options);
   }
 
+
   async login(user: User) {
     const accessToken = this.getAccessToken(user);
     const refreshToken = this.getRefreshToken(user);
+
     const hash = await bcrypt.hash(refreshToken, 10);
     await this.usersService.update(user.id, { refreshTokenHash: hash });
+
     return { accessToken, refreshToken };
   }
 
@@ -83,9 +87,8 @@ export class AuthService {
   }
 
   async logout(userId: number) {
+    // columna es string | null -> mándale null
     await this.usersService.update(userId, { refreshTokenHash: undefined });
     return { message: 'Sesión cerrada' };
   }
-
-  
 }

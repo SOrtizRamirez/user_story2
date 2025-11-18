@@ -33,7 +33,7 @@ export class User {
   role!: Role;
 
   @Column({ nullable: true })
-  refreshTokenHash?: string;
+  refreshTokenHash?: string
 
   @OneToMany(() => Order, (order) => order.user)
   orders!: Order[];
