@@ -3,8 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
-import { CreateUserDto, UpdateUserDto} from '../dtos/create-user.dto';
-
+import { UpdateUserDto } from '../dtos/create-user.dto'; 
 
 @Injectable()
 export class UsersService {
@@ -13,33 +12,29 @@ export class UsersService {
     private readonly repo: Repository<User>,
   ) {}
 
-  findAll() {
-    return this.repo.find();
+  // para el controlador (PATCH /users/:id)
+  async updateFromDto(id: number, dto: UpdateUserDto) {
+    await this.repo.update(id, dto);
+    return this.findById(id);
   }
 
-  async findOne(id: number) {
-    const user = await this.repo.findOne({ where: { id } });
-
-    if (!user) {
-      throw new NotFoundException(`User with id ${id} not found`);
-    }
-
-    return user;
+  // para uso interno (auth, refresh token, etc.)
+  async update(id: number, data: Partial<User>) {
+    await this.repo.update(id, data);
+    return this.findById(id);
   }
 
-  create(data: CreateUserDto) {
+  async findById(id: number) {
+    return this.repo.findOne({ where: { id } });
+  }
+
+  async findByEmail(email: string) {
+    return this.repo.findOne({ where: { email } });
+  }
+
+  async create(data: Partial<User>) {
     const user = this.repo.create(data);
     return this.repo.save(user);
   }
-
-  async update(id: number, data: UpdateUserDto) {
-    await this.repo.update({ id }, data);
-    return this.findOne(id);
-  }
-
-  async remove(id: number) {
-    const user = await this.findOne(id);
-    await this.repo.delete({ id });
-    return { message: `User with id ${id} deleted successfully` };
-  }
 }
+

@@ -1,0 +1,95 @@
+import { Injectable, UnauthorizedException, ForbiddenException } from '@nestjs/common';
+import { JwtService, JwtSignOptions } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
+import { UsersService } from '../users/users.services';
+import { ConfigService } from '@nestjs/config';
+import { User } from '../users/user.entity';
+
+@Injectable()
+export class AuthService {
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly jwt: JwtService,
+    private readonly config: ConfigService,
+  ) {}
+
+  private getAccessToken(user: User): string {
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+    };
+
+    const options: JwtSignOptions = {
+      secret: this.config.get<string>('JWT_SECRET')!,          // sin espacio
+      expiresIn: Number(this.config.get<string>('JWT_EXPIRES_IN') || '15m'),
+    };
+
+    return this.jwt.sign(payload, options);
+  }
+
+  private getRefreshToken(user: User): string {
+    const payload = { sub: user.id };
+
+    const options: JwtSignOptions = {
+      secret: this.config.get<string>('JWT_REFRESH_SECRET')!,
+      expiresIn:
+        Number(this.config.get<string>('JWT_REFRESH_EXPIRES_IN') || '7d'),
+    };
+
+    return this.jwt.sign(payload, options);
+  }
+
+  async login(user: User) {
+    const accessToken = this.getAccessToken(user);
+    const refreshToken = this.getRefreshToken(user);
+
+    const hash = await bcrypt.hash(refreshToken, 10);
+    await this.usersService.update(user.id, { refreshTokenHash: hash });
+
+    return { accessToken, refreshToken };
+  }
+
+  async refreshTokens(userId: number, refreshToken: string) {
+    const user = await this.usersService.findById(userId);
+    if (!user || !user.refreshTokenHash) {
+      throw new ForbiddenException('Acceso denegado');
+    }
+
+    const isMatch = await bcrypt.compare(refreshToken, user.refreshTokenHash);
+    if (!isMatch) throw new ForbiddenException('Acceso denegado');
+
+    const newAccessToken = this.getAccessToken(user);
+    const newRefreshToken = this.getRefreshToken(user);
+
+    const newHash = await bcrypt.hash(newRefreshToken, 10);
+    await this.usersService.update(user.id, { refreshTokenHash: newHash });
+
+    return {
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+    };
+  }
+
+  async validateUser(email: string, password: string): Promise<User> {
+    // Buscamos al usuario por email en la BD
+    const user = await this.usersService.findByEmail(email);
+    if (!user) {
+      throw new UnauthorizedException('Credenciales inválidas');
+    }
+
+    // Comparamos la contraseña plana con el hash guardado
+    const passwordMatches = await bcrypt.compare(password, user.password);
+    if (!passwordMatches) {
+      throw new UnauthorizedException('Credenciales inválidas');
+    }
+
+    // Si todo bien, devolvemos el user (lo usas en login)
+    return user;
+  }
+
+  async logout(userId: number) {
+    await this.usersService.update(userId, { refreshTokenHash: undefined });
+    return { message: 'Sesión cerrada' };
+  }
+}
