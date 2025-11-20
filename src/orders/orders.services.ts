@@ -2,6 +2,7 @@ import {
   Injectable,
   BadRequestException,
   NotFoundException,
+  UseGuards
 } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { OrdersRepository } from './orders.repository';
@@ -9,16 +10,11 @@ import { ClientsRepository } from '../clients/clients.repository';
 import { ProductsRepository } from '../products/products.repository';
 import { Order } from './orders.entity';
 import { OrderItem } from './order-item.entity';
-
-// Reemplaza luego por DTOs formales con class-validator
-type CreateOrderDto = {
-  clientId: number;
-  userId?: number; // si ligas la orden al vendedor que la registra
-  items: Array<{ productId: number; quantity: number }>;
-};
-
+import { CreateOrderDto,  GetOrdersDto } from "../dtos/create-order.dto";
+import { JwtAuthGuard } from 'src/common/guards/jwt.guards';
 type AddItemDto = { orderId: number; productId: number; quantity: number };
 
+@UseGuards(JwtAuthGuard)  
 @Injectable()
 export class OrdersService {
   constructor(
@@ -28,9 +24,6 @@ export class OrdersService {
     private readonly productsRepo: ProductsRepository,
   ) {}
 
-  /**
-   * Crea una orden con items y calcula el total de forma transaccional.
-   */
   async create(dto: CreateOrderDto) {
     if (!dto.items?.length) {
       throw new BadRequestException('Order must contain at least one item');
@@ -65,7 +58,6 @@ export class OrdersService {
         const item = ordersRepo.createItem({
           product,
           quantity: i.quantity,
-          // use numbers for numeric columns; toFixed if you must persist as string elsewhere
           unitPrice: unitPrice.toFixed(2),
           lineTotal: lineTotal.toFixed(2),
         });
@@ -83,9 +75,6 @@ export class OrdersService {
     });
   }
 
-  /**
-   * Obtiene detalle completo (client, user, items.product)
-   */
   async findOne(id: number) {
     const order = await this.ordersRepo.findOne({
       where: { id },
@@ -95,9 +84,6 @@ export class OrdersService {
     return order;
   }
 
-  /**
-   * Lista órdenes por cliente con items y productos
-   */
   findAllByClient(clientId: number, page = 1, limit = 10) {
     return this.ordersRepo.find({
       where: { client: { id: clientId } },
@@ -108,9 +94,6 @@ export class OrdersService {
     });
   }
 
-  /**
-   * Agrega un ítem a una orden existente y recalcula total (transacción).
-   */
   async addItem(dto: AddItemDto) {
     return this.dataSource.transaction(async (manager) => {
       const ordersRepo = this.ordersRepo.withManager(manager);
@@ -142,7 +125,6 @@ export class OrdersService {
         lineTotal: lineTotal.toFixed(2),
       });
 
-      // use repository from manager to ensure the transactional context
       await manager.getRepository(OrderItem).save(newItem);
 
       const total = await this.recalculateTotal(manager, Number(order.id));
@@ -155,9 +137,6 @@ export class OrdersService {
     });
   }
 
-  /**
-   * Elimina un ítem de una orden y recalcula total.
-   */
   async removeItem(orderId: number, itemId: number) {
     return this.dataSource.transaction(async (manager) => {
       const ordersRepo = this.ordersRepo.withManager(manager);
@@ -182,9 +161,28 @@ export class OrdersService {
   }
 
   private async recalculateTotal(manager: any, orderId: number): Promise<number> {
-    // Avoid raw column naming issues: read items in the transaction and sum in JS
     const repo = manager.getRepository(OrderItem);
     const items = await repo.find({ where: { order: { id: orderId } } });
     return items.reduce((acc, it) => acc + Number(it.lineTotal || 0), 0);
   }
+
+   async findAll(filters: GetOrdersDto) {
+    const page = filters.page ?? 1;
+    const limit = filters.limit ?? 10;
+
+    const where: any = {};
+
+    if (filters.clientId) {
+      where.client = { id: filters.clientId };
+    }
+
+    return this.ordersRepo.find({
+      where,
+      relations: { client: true, user: true, items: { product: true } },
+      skip: (page - 1) * limit,
+      take: limit,
+      order: { id: 'DESC' },
+    });
+  }
+
 }

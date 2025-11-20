@@ -2,8 +2,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';               // 👈 IMPORTANTE
 import { User } from './user.entity';
-import { UpdateUserDto } from '../dtos/create-user.dto'; 
+import { CreateUserDto, UpdateUserDto } from '../dtos/create-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -12,38 +13,50 @@ export class UsersService {
     private readonly repo: Repository<User>,
   ) {}
 
-  async updateFromDto(id: number, dto: UpdateUserDto) {
-    await this.repo.update(id, dto);
-    return this.findById(id);
-  }
-  async update(id: number, data: Partial<User>) {
-    await this.repo.update(id, data);
-    return this.findById(id);
+  findAll() {
+    return this.repo.find();
   }
 
-  async findById(id: number) {
-    return this.repo.findOne({ where: { id } });
+  async findOne(id: number) {
+    const user = await this.repo.findOne({ where: { id } });
+    if (!user) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+    return user;
   }
 
-  async findByEmail(email: string) {
+  findById(id: number) {
+    return this.findOne(id);
+  }
+
+  findByEmail(email: string) {
     return this.repo.findOne({ where: { email } });
   }
 
-  async create(data: Partial<User>) {
-    const user = this.repo.create(data);
+  // 👇 AQUÍ hasheamos la contraseña al crear
+  async create(dto: CreateUserDto) {
+    const hashedPassword = await bcrypt.hash(dto.password, 10);
+
+    const user = this.repo.create({
+      ...dto,
+      password: hashedPassword,
+    });
+
     return this.repo.save(user);
   }
 
-  async findAll() {
-    return this.repo.find();
-  }
-  
-  async remove(id: number) {
-    const user = await this.findById(id);
-    if (!user) {
-      throw new NotFoundException('User not found');
+  // 👇 opcional pero recomendable: si actualizan password, también se hashéa
+  async update(id: number, data: Partial<User>) {
+    if (data.password) {
+      data.password = await bcrypt.hash(data.password, 10);
     }
-    return this.repo.remove(user);
+
+    await this.repo.update(id, data);
+    return this.findOne(id);
+  }
+
+  async remove(id: number) {
+    await this.repo.delete(id);
+    return { message: 'User deleted' };
   }
 }
-

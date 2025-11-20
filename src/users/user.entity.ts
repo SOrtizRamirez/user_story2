@@ -32,8 +32,8 @@ export class User {
   @JoinColumn({ name: 'role' })
   role!: Role;
 
-  @Column({ nullable: true })
-  refreshTokenHash?: string
+  @Column({ nullable: true, type: 'text' })
+  refreshTokenHash!: string | null;
 
   @OneToMany(() => Order, (order) => order.user)
   orders!: Order[];

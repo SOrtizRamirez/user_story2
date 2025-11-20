@@ -14,25 +14,31 @@ export class AuthService {
   ) { }
 
   private getAccessToken(user: User): string {
-    const payload = { sub: user.id, email: user.email, role: user.role };
-
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+    };
     const expiresInConfig = this.config.get<string>('JWT_EXPIRES_IN');
-    const expiresIn = expiresInConfig ? Number(expiresInConfig) : 900;
+    const expiresIn = expiresInConfig ? Number(expiresInConfig) : 900; // 900s = 15 min
 
     const options: JwtSignOptions = {
       secret: this.config.get<string>('JWT_SECRET') || 'default_access_secret',
-      expiresIn,
+      expiresIn, // 👈 ahora es number, TS feliz
     };
 
-    return this.jwt.sign(payload, options);
+    return this.jwt.sign(payload, {
+      secret: this.config.get<string>('JWT_SECRET'),
+      expiresIn: '15m',
+    });
   }
+
 
   private getRefreshToken(user: User): string {
     const payload = { sub: user.id };
 
     const refreshExpiresConfig = this.config.get<string>('JWT_REFRESH_EXPIRES_IN');
     const expiresIn = refreshExpiresConfig ? Number(refreshExpiresConfig) : 604800;
-
     const options: JwtSignOptions = {
       secret: this.config.get<string>('JWT_REFRESH_SECRET') || 'default_refresh_secret',
       expiresIn,
@@ -87,8 +93,7 @@ export class AuthService {
   }
 
   async logout(userId: number) {
-    // columna es string | null -> mándale null
-    await this.usersService.update(userId, { refreshTokenHash: undefined });
-    return { message: 'Sesión cerrada' };
+    await this.usersService.update(userId, { refreshTokenHash: null});
+    return { ok: true, message: 'Sesión cerrada' };
   }
 }

@@ -1,8 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from './product.entity';
-
+import { JwtAuthGuard } from 'src/common/guards/jwt.guards';
+@UseGuards(JwtAuthGuard)  
 @Injectable()
 export class ProductsService {
   constructor(

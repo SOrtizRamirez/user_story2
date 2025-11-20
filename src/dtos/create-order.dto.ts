@@ -23,3 +23,23 @@ export class CreateOrderDto {
   @Type(() => OrderItemInput)
   items!: OrderItemInput[];
 }
+
+export class GetOrdersDto {
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  clientId?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  page?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  limit?: number;
+}

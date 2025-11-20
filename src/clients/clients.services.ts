@@ -1,7 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UseGuards } from '@nestjs/common';
 import { ClientsRepository } from './clients.repository';
 import { Client } from './client.entity';
+import { JwtAuthGuard } from 'src/common/guards/jwt.guards';
 
+@UseGuards(JwtAuthGuard)  
 @Injectable()
 export class ClientsService {
   constructor(private readonly repo: ClientsRepository) {}
