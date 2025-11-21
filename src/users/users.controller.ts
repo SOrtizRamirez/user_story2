@@ -8,10 +8,15 @@ import {
   Patch,
   Delete,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.services';
 import { CreateUserDto, UpdateUserDto } from '../dtos/create-user.dto';
+import { RolesGuard } from 'src/common/guards/roles.guards';
+import { JwtAuthGuard } from 'src/common/guards/jwt.guards';
+import { JwtRefreshGuard } from 'src/common/guards/jwt-refresh.guard';
 
+@UseGuards(RolesGuard, JwtAuthGuard, JwtRefreshGuard)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}

@@ -11,10 +11,8 @@ import { ProductsRepository } from '../products/products.repository';
 import { Order } from './orders.entity';
 import { OrderItem } from './order-item.entity';
 import { CreateOrderDto,  GetOrdersDto } from "../dtos/create-order.dto";
-import { JwtAuthGuard } from 'src/common/guards/jwt.guards';
 type AddItemDto = { orderId: number; productId: number; quantity: number };
 
-@UseGuards(JwtAuthGuard)  
 @Injectable()
 export class OrdersService {
   constructor(

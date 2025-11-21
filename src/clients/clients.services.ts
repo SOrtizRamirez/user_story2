@@ -1,9 +1,7 @@
 import { Injectable, NotFoundException, UseGuards } from '@nestjs/common';
 import { ClientsRepository } from './clients.repository';
 import { Client } from './client.entity';
-import { JwtAuthGuard } from 'src/common/guards/jwt.guards';
 
-@UseGuards(JwtAuthGuard)  
 @Injectable()
 export class ClientsService {
   constructor(private readonly repo: ClientsRepository) {}
@@ -40,7 +38,7 @@ export class ClientsService {
   }
 
   private async ensureExists(id: number) {
-    const exists = await this.repo.exist({ where: { id } });
+    const exists = await this.repo.find({ where: { id } });
     if (!exists) throw new NotFoundException('Client not found');
   }
 }

@@ -33,7 +33,6 @@ export class UsersService {
     return this.repo.findOne({ where: { email } });
   }
 
-  // 👇 AQUÍ hasheamos la contraseña al crear
   async create(dto: CreateUserDto) {
     const hashedPassword = await bcrypt.hash(dto.password, 10);
 
@@ -44,6 +43,7 @@ export class UsersService {
 
     return this.repo.save(user);
   }
+
 
   // 👇 opcional pero recomendable: si actualizan password, también se hashéa
   async update(id: number, data: Partial<User>) {
