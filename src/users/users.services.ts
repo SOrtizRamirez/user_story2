@@ -44,8 +44,6 @@ export class UsersService {
     return this.repo.save(user);
   }
 
-
-  // 👇 opcional pero recomendable: si actualizan password, también se hashéa
   async update(id: number, data: Partial<User>) {
     if (data.password) {
       data.password = await bcrypt.hash(data.password, 10);

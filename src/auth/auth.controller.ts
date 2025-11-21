@@ -4,7 +4,7 @@ import { JwtRefreshGuard } from '../common/guards/jwt-refresh.guard';
 import { JwtAuthGuard } from '../common/guards/jwt.guards';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { LoginDto } from '../dtos/login.dto';
-
+import { RegisterDto } from 'src/dtos/create-user.dto';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -27,5 +27,10 @@ export class AuthController {
     const userId = req.user.userId;
 
     return this.authService.logout(userId);
+  }
+
+  @Post('register')
+  register(@Body() dto: RegisterDto) {
+    return this.authService.register(dto);
   }
 }

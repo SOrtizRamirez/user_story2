@@ -27,22 +27,19 @@ async function seedUsers() {
       name: 'Admin Riwi',
       email: 'admin@riwisportsline.com',
       password: passwordAdmin,
-      role: Role.ADMIN,
-      isActive: true,
+      role: Role.ADMIN
     },
     {
       name: 'Vendedor 1',
       email: 'seller1@riwisportsline.com',
       password: passwordSeller,
-      role: Role.SELLER,
-      isActive: true,
+      role: Role.SELLER
     },
     {
       name: 'Cliente Interno',
       email: 'customer1@riwisportsline.com',
       password: passwordCustomer,
-      role: Role.CLIENT,
-      isActive: true,
+      role: Role.CLIENT
     },
   ];
 

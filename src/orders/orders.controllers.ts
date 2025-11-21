@@ -6,7 +6,6 @@ import { Type } from 'class-transformer';
 import { IsInt, Min } from 'class-validator';
 import { RolesGuard } from 'src/common/guards/roles.guards';
 import { JwtAuthGuard } from 'src/common/guards/jwt.guards';
-import { JwtRefreshGuard } from 'src/common/guards/jwt-refresh.guard';
 
 class AddItemDto {
   @Type(() => Number) @IsInt() productId!: number;
@@ -20,7 +19,7 @@ class OrdersByClientQuery {
   @Type(() => Number) @IsInt() @Min(1) limit?: number = 10;
 }
 
-@UseGuards(RolesGuard, JwtAuthGuard, JwtRefreshGuard)
+@UseGuards(RolesGuard, JwtAuthGuard)
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly service: OrdersService) {}

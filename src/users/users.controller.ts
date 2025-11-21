@@ -14,9 +14,8 @@ import { UsersService } from './users.services';
 import { CreateUserDto, UpdateUserDto } from '../dtos/create-user.dto';
 import { RolesGuard } from 'src/common/guards/roles.guards';
 import { JwtAuthGuard } from 'src/common/guards/jwt.guards';
-import { JwtRefreshGuard } from 'src/common/guards/jwt-refresh.guard';
 
-@UseGuards(RolesGuard, JwtAuthGuard, JwtRefreshGuard)
+@UseGuards(RolesGuard, JwtAuthGuard)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}

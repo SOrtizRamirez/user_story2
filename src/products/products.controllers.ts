@@ -3,9 +3,8 @@ import { ProductsService } from './products.services';
 import { Product } from './product.entity';
 import { RolesGuard } from 'src/common/guards/roles.guards';
 import { JwtAuthGuard } from 'src/common/guards/jwt.guards';
-import { JwtRefreshGuard } from 'src/common/guards/jwt-refresh.guard';
 
-@UseGuards(RolesGuard, JwtAuthGuard, JwtRefreshGuard)
+@UseGuards(RolesGuard, JwtAuthGuard)
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}

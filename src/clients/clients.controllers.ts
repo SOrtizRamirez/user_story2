@@ -4,9 +4,8 @@ import { CreateClientDto, UpdateClientDto } from '../dtos/create-client.dto';
 import { PaginationDto } from '../dtos/pagination.dto';
 import { RolesGuard } from 'src/common/guards/roles.guards';
 import { JwtAuthGuard } from 'src/common/guards/jwt.guards';
-import { JwtRefreshGuard } from 'src/common/guards/jwt-refresh.guard';
 
-@UseGuards(RolesGuard, JwtAuthGuard, JwtRefreshGuard)
+@UseGuards(RolesGuard, JwtAuthGuard)
 @Controller('clients')
 export class ClientsController {
   constructor(private readonly service: ClientsService) {}

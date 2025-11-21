@@ -1,17 +1,23 @@
-import { Injectable, UnauthorizedException, ForbiddenException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.services';
 import { ConfigService } from '@nestjs/config';
 import { User } from '../users/user.entity';
+import { RegisterDto } from 'src/dtos/create-user.dto';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class AuthService {
   constructor(
+    @InjectRepository(User)
+    private readonly userRepo: Repository<User>,
     private readonly usersService: UsersService,
     private readonly jwt: JwtService,
-    private readonly config: ConfigService,
+    private readonly config: ConfigService
   ) { }
+  
 
   private getAccessToken(user: User): string {
     const payload = {
@@ -93,7 +99,25 @@ export class AuthService {
   }
 
   async logout(userId: number) {
-    await this.usersService.update(userId, { refreshTokenHash: null});
+    await this.usersService.update(userId, { refreshTokenHash: null });
     return { ok: true, message: 'Sesión cerrada' };
+  }
+
+
+  async register(dto: RegisterDto) {
+    const exists = await this.userRepo.findOne({ where: { email: dto.email } });
+
+    if (exists) {
+      throw new BadRequestException('Email already registered');
+    }
+
+    const hashedPassword = await bcrypt.hash(dto.password, 10);
+
+    const newUser = this.userRepo.create({
+      ...dto,
+      password: hashedPassword,
+    });
+
+    return this.userRepo.save(newUser);
   }
 }
