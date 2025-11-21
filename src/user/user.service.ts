@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { RegisterDto } from 'src/auth/dto/register.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -29,10 +30,8 @@ export class UserService {
         return user;
     }
 
-    async findByEmail(email: string): Promise<User> {
-        const user = await this.userRepo.findOne({ where: { email }});
-        if(!user) throw new NotFoundException('User not found');
-        return user;
+    async findByEmail(email: string): Promise<User | null> {
+        return this.userRepo.findOne({ where: { email }});;
     }
 
     async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
@@ -46,5 +45,17 @@ export class UserService {
         if (result.affected === 0) {
             throw new NotFoundException(`User #${id} not found`);
         }
+    }
+
+    // guarda un nuevo hash del refresh token
+    async updateRefreshTokenHash(id: number, refreshToken: string): Promise<void> {
+        const hash = await bcrypt.hash(refreshToken, 10);
+        await this.userRepo.update(id, { refreshToken: hash });
+    }
+
+    /** Devuelve el hash almacenado del refresh token */
+    async getRefreshTokenHash(id: number): Promise<string | null> {
+        const user = await this.findOne(id);
+        return user.refreshToken ?? null; 
     }
 }

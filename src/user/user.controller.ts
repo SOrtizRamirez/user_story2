@@ -4,12 +4,12 @@ import { RegisterDto } from 'src/auth/dto/register.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('user')
-@UseGuards(RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class UserController {
     constructor(private readonly userService: UserService) {}
-
 
     @Roles('admin')
     @Post()

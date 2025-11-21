@@ -4,9 +4,10 @@ import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('clients')
-@UseGuards(RolesGuard)
+@UseGuards(JwtAuthGuard ,RolesGuard)
 export class ClientController {
     constructor(private readonly clientService: ClientService) {}
     
