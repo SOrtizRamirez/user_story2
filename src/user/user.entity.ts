@@ -18,6 +18,9 @@ export class User {
     @Column({ type: 'enum', enum: ['admin', 'seller'], default: 'seller' })
     role: string;
 
+    @Column({ nullable: true })
+    refreshToken: string;
+
     @OneToMany(() => Order, (order) => order.user)
     orders: Order[];
 }

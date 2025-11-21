@@ -1,5 +1,6 @@
 import { DataSource } from "typeorm";
 import { User } from "src/user/user.entity";
+import * as bcrypt from 'bcrypt';
 
 export async function seedUsers(dataSource: DataSource) {
     const userRepo = dataSource.getRepository(User);
@@ -9,9 +10,12 @@ export async function seedUsers(dataSource: DataSource) {
         return;
     }
 
+    const pass = '123456'
+    const password = await bcrypt.hash(pass, 10)
+
     const users = userRepo.create([
-        { name: 'Admin', email: 'admin@mail.com', password: '123456', role: 'admin' },
-        { name: 'Seller', email: 'seller@mail.com', password: '123456', role: 'seller' },
+        { name: 'Admin', email: 'admin@mail.com', password, role: 'admin' },
+        { name: 'Seller', email: 'seller@mail.com', password, role: 'seller' },
     ]);
 
     await userRepo.save(users);

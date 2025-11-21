@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
+import { RegisterDto } from 'src/auth/dto/register.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
@@ -13,7 +13,7 @@ export class UserController {
 
     @Roles('admin')
     @Post()
-    create(@Body() dto: CreateUserDto) {
+    create(@Body() dto: RegisterDto) {
         return this.userService.create(dto);
     }
 

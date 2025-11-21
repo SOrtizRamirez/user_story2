@@ -8,6 +8,7 @@ import { ClientModule } from './client/client.module';
 import { ProductModule } from './product/product.module';
 import { OrderModule } from './order/order.module';
 import { envSchema } from './config/env.validation';
+import { AuthModule } from './auth/auth.module';
 import configuration from './config/configuration';
 
 
@@ -38,6 +39,7 @@ import configuration from './config/configuration';
       ClientModule,
       ProductModule,
       OrderModule,
+      AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
