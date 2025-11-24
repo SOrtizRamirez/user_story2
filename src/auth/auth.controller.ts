@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 export class AuthController {
@@ -18,9 +19,12 @@ export class AuthController {
         return this.authService.login(dto);
     }
 
-    @UseGuards(JwtRefreshGuard)
     @Post('refresh')
-    refresh(@Req() req) {
-        return this.authService.refreshToken(req.user.sub, req.user.refreshToken);
+    @UseGuards(AuthGuard('jwt-refresh'))
+    async refresh(@Req() req: any) {
+        const userId = req.user.sub;
+        const refreshToken = req.user.refreshToken;
+
+        return this.authService.refreshToken(userId, refreshToken);
     }
 }

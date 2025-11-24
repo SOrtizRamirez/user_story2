@@ -48,8 +48,7 @@ export class UserService {
     }
 
     // guarda un nuevo hash del refresh token
-    async updateRefreshTokenHash(id: number, refreshToken: string): Promise<void> {
-        const hash = await bcrypt.hash(refreshToken, 10);
+    async updateRefreshTokenHash(id: number, hash: string): Promise<void> {
         await this.userRepo.update(id, { refreshToken: hash });
     }
 
