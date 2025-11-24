@@ -10,11 +10,13 @@ import { OrdersController } from './orders.controllers';
 import { ProductsModule } from '../products/products.module';
 import { ClientsModule } from '../clients/client.module';
 
+import { ApiKeyModule } from '../api-key/api-key.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Order, OrderItem]),
     forwardRef(() => ProductsModule),
     forwardRef(() => ClientsModule),
+    ApiKeyModule
   ],
   providers: [OrdersRepository, OrdersService],
   controllers: [OrdersController],

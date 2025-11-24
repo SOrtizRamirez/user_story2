@@ -82,7 +82,7 @@ export class OrdersService {
     return order;
   }
 
-  findAllByClient(clientId: number, page = 1, limit = 10) {
+ async findAllByClient(clientId: number, page = 1, limit = 10) {
     return this.ordersRepo.find({
       where: { client: { id: clientId } },
       relations: { items: { product: true } },

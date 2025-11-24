@@ -14,8 +14,11 @@ import { UsersService } from './users.services';
 import { CreateUserDto, UpdateUserDto } from '../dtos/create-user.dto';
 import { RolesGuard } from 'src/common/guards/roles.guards';
 import { JwtAuthGuard } from 'src/common/guards/jwt.guards';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 
-@UseGuards(RolesGuard, JwtAuthGuard)
+@ApiTags('users')
+@ApiBearerAuth('jwt')
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -27,12 +30,13 @@ export class UsersController {
 
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.findById(id);
+    return this.usersService.findOne(id);
   }
 
   @Post()
-  create(@Body() data: CreateUserDto) {
-    return this.usersService.create(data);
+  create(@Body() dto: CreateUserDto) {
+    // esto sería para crear usuarios desde admin; para registro público usa /auth/register
+    return this.usersService.create(dto);
   }
 
   @Patch(':id')

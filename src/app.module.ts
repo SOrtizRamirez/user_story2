@@ -15,6 +15,8 @@ import {  ContentTypeValidationMiddleware } from '../src/common/middlewares/cont
 import { APP_FILTER } from '@nestjs/core';
 import { HttpErrorFilter } from '../src/common/filters/http-exception.filter'
 import { AuthModule } from './auth/auth.module';
+import { ApiKeyModule } from './api-key/api-key.module';
+import { OauthModule } from './oauth/oauth.module';
 import 'dotenv/config';
 
 @Module({
@@ -34,6 +36,8 @@ import 'dotenv/config';
     ClientsModule,
     UsersModule,
     AuthModule,
+    ApiKeyModule,
+    OauthModule,
   ],
 
   providers: [

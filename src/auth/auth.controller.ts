@@ -1,4 +1,5 @@
 import { Body, Controller, Post, UseGuards, Req } from '@nestjs/common';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { JwtRefreshGuard } from '../common/guards/jwt-refresh.guard';
 import { JwtAuthGuard } from '../common/guards/jwt.guards';
@@ -7,7 +8,7 @@ import { LoginDto } from '../dtos/login.dto';
 import { RegisterDto } from 'src/dtos/create-user.dto';
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Post('login')
   async login(@Body() dto: LoginDto) {
@@ -18,19 +19,23 @@ export class AuthController {
   @UseGuards(JwtRefreshGuard)
   @Post('refresh')
   async refresh(@CurrentUser() user: any) {
-    return this.authService.refreshTokens(user.userId, user.refreshToken);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Post('logout')
-  async logout(@Req() req) {
-    const userId = req.user.userId;
-
-    return this.authService.logout(userId);
+    return this.authService.refreshTokens(user.userId);
   }
 
   @Post('register')
   register(@Body() dto: RegisterDto) {
     return this.authService.register(dto);
   }
+
+  @Post('logout')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('jwt')
+  async logout(@Req() req: any) {
+    const userId = req.user?.sub || req.user?.id;
+    await this.authService.logout(userId);
+    return {
+      message: 'Logout successful',
+    };
+  }
+
 }
