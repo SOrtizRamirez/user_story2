@@ -13,10 +13,9 @@ export class OauthController {
   @UseGuards(AuthGuard('google'))
   @ApiOAuth2(['profile', 'email'])
   @ApiOperation({ summary: 'Redirige a Google para iniciar sesión con OAuth2' })
-  async googleAuth() {
-  }
+  async googleAuth() {}
 
-  @Get('google/callback')
+  @Get('google/redirect')
   @UseGuards(AuthGuard('google'))
   @ApiOAuth2(['profile', 'email'])
   @ApiOperation({
@@ -24,6 +23,8 @@ export class OauthController {
       'Callback de Google. Valida el usuario y devuelve tokens JWT internos',
   })
   async googleAuthCallback(@Req() req: any) {
+    console.log('✅ googleUser desde GoogleStrategy:', req.user);
+
     const googleUser = req.user;
 
     const { user, accessToken, refreshToken } =

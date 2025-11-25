@@ -10,8 +10,8 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   type: 'postgres',
   host: process.env.DB_HOST || 'localhost',
   port: Number(process.env.DB_PORT) || 5432,
-  username: process.env.DB_USERNAME || 'sharon',
-  password: process.env.DB_PASSWORD || '0619!',
+  username: process.env.DB_USERNAME || 'user',
+  password: process.env.DB_PASSWORD || 'password',
   database: process.env.DB_NAME || 'riwi_sportsline',
   entities: [User, Client, Product, Order],
   synchronize: false, // en producción SIEMPRE false

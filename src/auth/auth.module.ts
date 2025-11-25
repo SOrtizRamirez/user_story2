@@ -18,16 +18,7 @@ import { GoogleStrategy } from '../strategies/google.strategy';
     PassportModule,
     ConfigModule,
     TypeOrmModule.forFeature([User]),
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        secret: config.get<string>('JWT_ACCESS_SECRET'),
-        signOptions: {
-          expiresIn: Number(config.get<string | number>('JWT_ACCESS_EXPIRES_IN') || '15m'),
-        },
-      }),
-    }),
+    JwtModule.register({})
   ],
   controllers: [AuthController],
   providers: [

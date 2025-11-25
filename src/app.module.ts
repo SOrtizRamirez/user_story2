@@ -18,15 +18,18 @@ import { AuthModule } from './auth/auth.module';
 import { ApiKeyModule } from './api-key/api-key.module';
 import { OauthModule } from './oauth/oauth.module';
 import 'dotenv/config';
-
+import { ConfigModule } from '@nestjs/config';
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true, 
+    }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
       port: Number(process.env.DB_PORT) || 5432,
-      username: process.env.DB_USER || 'sharon',
-      password: process.env.DB_PASSWORD|| '0619!',
+      username: process.env.DB_USER || 'user',
+      password: process.env.DB_PASSWORD|| 'password',
       database: process.env.DB_NAME || 'riwi_sportsline',
       entities: [Product, Order, OrderItem, Client, User],
       synchronize: true,

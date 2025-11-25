@@ -57,20 +57,14 @@ export class AuthService {
   }
 
 
-  private getAccessToken(user: User): string {
-    const payload = {
-      sub: user.id,
-      email: user.email,
-      role: user.role,
-    };
+  getAccessToken(user: User): string {
+    const payload = { sub: user.id, email: user.email, role: user.role };
 
-    const options: JwtSignOptions = {
-      expiresIn:
-        Number(this.configService.get<string | number>('JWT_ACCESS_EXPIRES_IN') ||
-          '15m'),
-    };
-
-    return this.jwtService.sign(payload, options);
+    // PRUEBA BRUTAL: hardcodear el secret
+    return this.jwtService.sign(payload, {
+      secret: process.env.JWT_SECRET || '', // 👈 HARDCODEADO
+      expiresIn: '15m',
+    });
   }
 
   private getRefreshToken(user: User): string {
@@ -98,7 +92,6 @@ export class AuthService {
     return { accessToken };
   }
 
-  // ✅ Registro clásico con email/password
   async register(dto: RegisterDto): Promise<User> {
     const exists = await this.usersService.findByEmail(dto.email);
     if (exists) {
