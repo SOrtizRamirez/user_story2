@@ -13,6 +13,6 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   username: process.env.DB_USERNAME || 'user',
   password: process.env.DB_PASSWORD || 'password',
   database: process.env.DB_NAME || 'riwi_sportsline',
-  entities: [User, Client, Product, Order],
+  entities: [User, Client, Product, Order, OrderItem],
   synchronize: false, // en producción SIEMPRE false
 };
