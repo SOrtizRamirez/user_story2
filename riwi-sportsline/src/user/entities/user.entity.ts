@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn,  OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Order } from '../../order/entities/order.entity';
 
 @Entity()
@@ -15,10 +15,9 @@ export class User {
   @Column({ nullable: false })
   password: string;
 
-  @Column({ type: "enum", enum:['admin', 'user'], default:'user'})
+  @Column({ type: 'enum', enum: ['admin', 'user'], default: 'user' })
   role: string;
-  
+
   @OneToMany(() => Order, (order) => order.user)
   orders: Order[];
 }
-

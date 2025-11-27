@@ -1,37 +1,55 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
+import { UserService } from '../user/user.service';
+import { LoginDto } from "./dto/login.dto";
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly userService: UserService,
-    private readonly jwtService: JwtService,
+    private usersService: UserService,
+    private jwt: JwtService
   ) {}
 
-  async validateUser(email: string, password: string): Promise<any> {
-    const user = await this.userService.findByEmail(email);
-    if (!user) throw new UnauthorizedException('Usuario no encontrado');
-
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid)
-      throw new UnauthorizedException('Contraseña incorrecta');
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password: _, ...result } = user;
-    return result;
+  async validateUser(loginDTO: LoginDto) {
+    const user = await this.usersService.findByEmail(loginDTO.email);
+    if (user && (await bcrypt.compare(loginDTO.password, user.password))) {
+      return user;
+    }
+    throw new UnauthorizedException('Email o contraseña incorrectos');
   }
 
-  async login(email: string, password: string) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const user = await this.validateUser(email, password);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-    const payload = { sub: user.id, email: user.email };
+  async login(user: any) {
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+    };
+
+    const accessToken = this.jwt.sign(payload, {
+      expiresIn: '15m',
+    });
+
+    const refreshToken = this.jwt.sign(payload, {
+      secret: process.env.JWT_REFRESH_SECRET,
+      expiresIn: '7d',
+    });
 
     return {
-      message: 'Login exitoso',
-      access_token: this.jwtService.sign(payload),
+      access_token: accessToken,
+      refresh_token: refreshToken,
+    };
+  }
+
+  async refresh(user: any) {
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+    };
+
+    return {
+      access_token: this.jwt.sign(payload, { expiresIn: '15m' }),
     };
   }
 }

@@ -8,7 +8,7 @@ import { UpdateCustomerDto } from './dto/update-customer.dto';
 @Injectable()
 export class CustomerService {
   constructor(
-    @InjectRepository(Customer)
+    @InjectRepository(Customer)  //Inyectamos la entidad
     private readonly customerRepository: Repository<Customer>,
   ) {}
 
@@ -19,7 +19,7 @@ export class CustomerService {
   async findById(id: number): Promise<Customer> {
     const customer = await this.customerRepository.findOneBy({ id });
     if (!customer) {
-      throw new NotFoundException('Producto no encontrado');
+      throw new NotFoundException('Cliente no encontrado');
     }
     return customer;
   }
@@ -32,17 +32,16 @@ export class CustomerService {
   async update(id: number, customerUpdate: Partial<UpdateCustomerDto>): Promise<Customer> {
   const customer = await this.findById(id);
   if (!customer) {
-    throw new NotFoundException('Producto no encontrado');
+    throw new NotFoundException('Cliente no encontrado');
   }
   Object.assign(customer, customerUpdate);
   return await this.customerRepository.save(customer);
 }
 
-
   async remove(id: number): Promise<Customer> {
     const customer = await this.findById(id);
     if (!customer) {
-      throw new NotFoundException('Usuario no encontrado');
+      throw new NotFoundException('Cliente no encontrado');
     }
     return await this.customerRepository.remove(customer);
   }

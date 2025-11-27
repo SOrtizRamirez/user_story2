@@ -42,7 +42,7 @@ export class ProductService {
   async remove(id: number): Promise<Product> {
     const product = await this.findById(id);
     if (!product) {
-      throw new NotFoundException('Usuario no encontrado');
+      throw new NotFoundException('Producto no encontrado');
     }
     return await this.productRepository.remove(product);
   }

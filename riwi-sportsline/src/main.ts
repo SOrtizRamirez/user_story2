@@ -10,7 +10,7 @@ async function bootstrap() {
 
   app.use(new AuditMiddleware().use);
   app.useGlobalFilters(new HttpExceptionFilter())
-  //app.useGlobalInterceptors(new LoggingInterceptor());  //Interceptos globales
+  app.useGlobalInterceptors(new LoggingInterceptor());  //Interceptos globales
 
   app.useGlobalPipes(
     new ValidationPipe({
