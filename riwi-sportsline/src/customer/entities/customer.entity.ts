@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn,  OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column,  OneToMany } from 'typeorm';
 import { Order } from '../../order/entities/order.entity';
 
 @Entity()
@@ -17,6 +17,9 @@ export class Customer {
 
   @Column({ nullable: false })
   address: string;
+
+  // @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  // createdAt: Date;
 
   @OneToMany(() => Order, (order) => order.customer)
   orders: Order[];

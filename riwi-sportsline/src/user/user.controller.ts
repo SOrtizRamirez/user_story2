@@ -1,33 +1,19 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Delete,
-  Param,
-  Body,
-  UseFilters,
-  UseGuards,
-  UseInterceptors,
-} from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards, } from '@nestjs/common';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { HttpExceptionFilter } from '../common/filters/http-exception.filter';
 import { Roles } from '../common/decorators/roles.decorator'
 import { RolesGuard } from '../common/guards/roles.guard';
-import { LoggingInterceptor } from '../common/interceptors/logging.interceptor';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
-//@UseFilters(HttpExceptionFilter) // ← se aplica solo a este controlador
 @Controller('users')
-@UseInterceptors(LoggingInterceptor) // se aplica a todo el controlador
-@UseGuards(RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class UserController {
   //Inyectamos el servicio
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  //@Roles('admin', 'user') // solo admin puede ver todos los clientes
+  @Roles('admin', 'user')
   findAll() {
     return this.userService.findAll();
   }

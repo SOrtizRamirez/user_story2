@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { Customer } from './customer/entities/customer.entity';
 import { Order } from "./order/entities/order.entity";
@@ -11,6 +11,7 @@ import { User } from "./user/entities/user.entity";
 import { CustomerModule } from './customer/customer.module';
 import { OrderModule } from './order/order.module';
 import { ProductModule } from './product/product.module';
+import { AuthModule } from "./auth/auth.module";
 
 @Module({
   imports: [
@@ -29,21 +30,17 @@ import { ProductModule } from './product/product.module';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [User, Product, Order, Customer],
-      //autoLoadEntities: true, // carga entidades automáticamente
+      //entities: [User, Product, Order, Customer],
+      autoLoadEntities: true, // carga entidades automáticamente
       //synchronize: true, //  crea tablas automáticamente (solo en desarrollo)
-      synchronize: true, //  crea tablas automáticamente (solo en desarrollo)
 
     }),
-
     //  Módulo de tareas (u otros)
     UserModule,
-
     CustomerModule,
-
     OrderModule,
-
     ProductModule,
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],
