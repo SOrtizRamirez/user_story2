@@ -32,7 +32,12 @@ export class AuthService {
         const valid = await bcrypt.compare(dto.password, user.password);
         if(!valid) throw new BadRequestException('Invalid credentials');
 
-        const payload = { sub: user.id, email: user.email, role: user.role };
+        const payload = { 
+            sub: user.id,
+            email: user.email,
+            role: user.role, 
+            permissions: user.role.permissions.map(p => p.name)
+        };
 
         const token = this.jwtService.sign(payload, {
             expiresIn: '15m'
@@ -61,7 +66,12 @@ export class AuthService {
         const valid = await bcrypt.compare(refreshToken, user.refreshToken);
         if (!valid) throw new BadRequestException('Invalid refresh token');
 
-        const payload = { sub: user.id, email: user.email, role: user.role };
+        const payload = { 
+            sub: user.id,
+            email: user.email,
+            role: user.role, 
+            permissions: user.role.permissions.map(p => p.name)
+        };
 
         // Nuevo access token
         const newAccess = this.jwtService.sign(payload, {

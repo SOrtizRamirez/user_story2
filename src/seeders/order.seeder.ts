@@ -1,6 +1,6 @@
 import { DataSource } from "typeorm";
 import { Order } from "src/order/order.entity";
-import { User } from "src/user/user.entity";
+import { User } from "src/user/entities/user.entity";
 import { Client } from "src/client/client.entity";
 import { Product } from "src/product/product.entity";
 

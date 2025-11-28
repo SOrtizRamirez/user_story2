@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne } from "typeorm";
 import { Order } from "src/order/order.entity";
+import { Role } from "src/roles/entities/role.entity";
 
 @Entity({ name: 'users' })
 export class User {
@@ -15,8 +16,8 @@ export class User {
     @Column()
     password: string;
 
-    @Column({ type: 'enum', enum: ['admin', 'seller'], default: 'seller' })
-    role: string;
+    @ManyToOne(() => Role, { eager: true })
+    role: Role;
 
     @Column({ nullable: true })
     refreshToken: string;

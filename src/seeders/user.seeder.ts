@@ -1,5 +1,5 @@
 import { DataSource } from "typeorm";
-import { User } from "src/user/user.entity";
+import { User } from "src/user/entities/user.entity";
 import * as bcrypt from 'bcrypt';
 
 export async function seedUsers(dataSource: DataSource) {
@@ -14,8 +14,8 @@ export async function seedUsers(dataSource: DataSource) {
     const password = await bcrypt.hash(pass, 10)
 
     const users = userRepo.create([
-        { name: 'Admin', email: 'admin@mail.com', password, role: 'admin' },
-        { name: 'Seller', email: 'seller@mail.com', password, role: 'seller' },
+        { name: 'Admin', email: 'admin@mail.com', password, role: { id: 1 }},
+        { name: 'Seller', email: 'seller@mail.com', password, role: { id: 2 }},
     ]);
 
     await userRepo.save(users);
