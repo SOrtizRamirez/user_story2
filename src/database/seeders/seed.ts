@@ -41,6 +41,15 @@ async function seedUsers() {
       password: passwordCustomer,
       role: Role.CLIENT
     },
+    {
+      name: 'Usuario Google Test',
+      email: 'googleuser@example.com',
+      password: await bcrypt.hash('temp', 10),
+      role: Role.CLIENT,
+      provider: 'google',
+      providerId: 'google_123456789',
+      avatar: 'https://example.com/avatar.jpg'
+    },
   ];
 
   const users = usersData.map((data) => userRepo.create(data));

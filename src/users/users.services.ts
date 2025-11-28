@@ -90,8 +90,11 @@ export class UsersService {
 
   async updateRefreshToken(
     userId: number,
-    refreshTokenHash: string | null,
+    token: string | null,
   ): Promise<void> {
-    await this.repo.update(userId, { refreshTokenHash });
+    await this.repo.update(
+      { id: userId },
+      { refreshTokenHash: token }
+    );
   }
 }

@@ -118,25 +118,26 @@ export class AuthService {
     const { email, providerId, name, avatar } = googleUser;
 
     if (!email) {
-      throw new UnauthorizedException(
-        'Google account does not have a public email',
-      );
+      throw new BadRequestException('Email not provided by OAuth provider');
     }
 
     let user = await this.usersService.findByEmail(email);
 
     if (!user) {
-      user = await this.usersService.createFromOAuth({
+      user = await this.usersService.create({
         email,
-        name,
-        avatar,
+        name: name || 'OAuth User',
+        password: '', 
         provider: 'google',
         providerId,
+        avatar,
       });
     }
 
     const accessToken = this.getAccessToken(user);
     const refreshToken = this.getRefreshToken(user);
+
+    await this.usersService.updateRefreshToken(user.id, refreshToken);
 
     return {
       user,
@@ -147,8 +148,29 @@ export class AuthService {
 
 
   async logout(userId: number): Promise<{ message: string }> {
-    await this.usersService.updateRefreshToken(userId, null);
-    return { message: 'Logout successful' };
-  }
+    try {
+      console.log('🔍 userId recibido:', userId);
+      
+      // 1️⃣ Validar que el usuario existe
+      const user = await this.usersService.findOne(userId);
+      console.log('👤 Usuario encontrado:', user);
+      
+      if (!user) {
+        throw new UnauthorizedException('User not found');
+      }
 
+      console.log('🗑️ Limpiando refresh token...');
+      await this.usersService.updateRefreshToken(userId, null);
+      console.log('✅ Token limpiado');
+
+      if (user.provider && user.providerId) {
+        return { message: `Logout successful for ${user.provider} user` };
+      }
+
+      return { message: 'Logout successful' };
+    } catch (error) {
+      console.error('❌ Error en logout:', error);
+      throw error;
+    }
+  }
 }

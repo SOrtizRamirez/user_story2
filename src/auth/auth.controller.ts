@@ -1,5 +1,4 @@
-import { Body, Controller, Post, UseGuards, Req } from '@nestjs/common';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { Body, Controller, Post, UseGuards, Req, Request } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtRefreshGuard } from '../common/guards/jwt-refresh.guard';
 import { JwtAuthGuard } from '../common/guards/jwt.guards';
@@ -29,13 +28,8 @@ export class AuthController {
 
   @Post('logout')
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('jwt')
-  async logout(@Req() req: any) {
-    const userId = req.user?.sub || req.user?.id;
-    await this.authService.logout(userId);
-    return {
-      message: 'Logout successful',
-    };
+  async logout(@Request() req) {
+    return this.authService.logout(req.user.id);
   }
 
 }

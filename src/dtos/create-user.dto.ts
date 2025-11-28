@@ -1,5 +1,5 @@
 // src/users/dtos/create-user.dto.ts
-import { IsString, IsEmail, IsNotEmpty, MinLength, IsEnum } from 'class-validator';
+import { IsString, IsEmail, IsNotEmpty, MinLength, IsEnum, isString } from 'class-validator';
 import { PartialType } from '@nestjs/mapped-types';
 import { Role } from '../common/enums/role.enum';
 
@@ -17,6 +17,15 @@ export class CreateUserDto {
 
   @IsString()
   refreshTokenHash?: string | undefined;
+
+  @IsString()
+  providerId?: string;
+
+  @IsString()
+  provider?: string;
+
+  @IsString()
+  avatar?: string;
 }
 
 export class RegisterDto {

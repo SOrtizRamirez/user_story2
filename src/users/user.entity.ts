@@ -25,9 +25,9 @@ export class User {
   password!: string;
 
   @Column({
-  type: 'enum',
-  enum: Role,
-  default: Role.CLIENT
+    type: 'enum',
+    enum: Role,
+    default: Role.CLIENT
   })
   @JoinColumn({ name: 'role' })
   role!: Role;
@@ -37,5 +37,13 @@ export class User {
 
   @OneToMany(() => Order, (order) => order.user)
   orders!: Order[];
+  
+  @Column({ nullable: true })
+  providerId?: string;
 
+  @Column({ nullable: true })
+  provider?: string;
+
+  @Column({ nullable: true })
+  avatar?: string;
 }
