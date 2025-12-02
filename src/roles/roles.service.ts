@@ -19,12 +19,11 @@ export class RolesService {
     }
 
     async getUserPermissions(id: number): Promise<string[]> {
-        const user = await this.userRepo.findOne({ where: { id }, relations: ["role"] });
+        const user = await this.userRepo.findOne({ where: { id }, relations: ["role", "role.permissions"] });
         if (!user) throw new NotFoundException(`User with id ${id} not found`);
 
-        const perms = new Set<string>();
-        (user.role.permissions || []).forEach(p => perms.add(p.name));
+        if (!user.role) throw new NotFoundException(`User with id ${id} has no role`);
 
-        return Array.from(perms);
+        return user.role.permissions?.map(p => p.name) || [];
     }
 }
