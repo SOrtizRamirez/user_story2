@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from './product.entity';
@@ -36,10 +36,21 @@ export class ProductService {
     }
 
     async remove(id: number): Promise<void> {
-        const result = await this.productRepo.delete(id);
-        if (result.affected === 0) {
-            throw new NotFoundException(`Product #${id} not found`);
+        const product = await this.productRepo.findOne({
+            where: { id },
+            relations: ['orders']
+        });
+
+        if(!product) throw new NotFoundException(`Product #${id} not found`);
+
+        if(product.orders && product.orders.length > 0) {
+            throw new BadRequestException({
+                message: `Cannot delete product #${id} because it has associated orders. ` +
+                `Please delete or update the related orders first.`
+            });
         }
+
+        await this.productRepo.delete(id);
     }
 }
 

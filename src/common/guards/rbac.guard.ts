@@ -3,16 +3,15 @@ import { Reflector } from "@nestjs/core";
 import { PERMS_KEY } from "../decorators/permissions.decorator";
 import { ROLES_KEY } from "../decorators/roles.decorator";
 import { Request } from "express";
-import { RolesService } from "src/roles/roles.service";
 
 @Injectable()
 export class RbacGuard implements CanActivate {
     constructor(
         private reflector: Reflector,
-        private roleService: RolesService
     ) {}
 
     async canActivate(ctx: ExecutionContext): Promise<boolean> {
+
         const req = ctx.switchToHttp().getRequest<Request>();
         const user = req.user as any; // user provisto por JwtStrategy (passport)
         if(!user) return false;
@@ -21,8 +20,8 @@ export class RbacGuard implements CanActivate {
         const requiredPerms = this.reflector.get<string[]>(PERMS_KEY, ctx.getHandler()) || [];
 
         // leer Roles/Permisos del usuario desde JWT
-        const userRoles = user.role || [];
-        const userPerms = user.perms || [];
+        const userRoles = Array.isArray(user.role) ? user.role : [user.role];
+        const userPerms = Array.isArray(user.perms) ? user.perms : [];
 
         if(requiredRoles.length) {
             const hasRole = requiredRoles.some(role => userRoles.includes(role));

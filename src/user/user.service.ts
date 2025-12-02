@@ -22,7 +22,10 @@ export class UserService {
     }
 
     async findOne(id: number): Promise<User> {
-        const user = await this.userRepo.findOne({ where: { id } });
+        const user = await this.userRepo.findOne({ 
+            where: { id },
+            relations: ['role', 'role.permissions']
+        });
         if (!user) {
             throw new NotFoundException(`User #${id} not found`);
         }
@@ -30,7 +33,10 @@ export class UserService {
     }
 
     async findByEmail(email: string): Promise<User | null> {
-        return this.userRepo.findOne({ where: { email }});;
+        return this.userRepo.findOne({ 
+            where: { email },
+            relations: ['role', 'role.permissions']
+        });;
     }
 
     async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {

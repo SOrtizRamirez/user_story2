@@ -35,8 +35,8 @@ export class AuthService {
         const payload = { 
             sub: user.id,
             email: user.email,
-            role: user.role, 
-            permissions: user.role.permissions.map(p => p.name)
+            role: user.role?.name || 'Seller', 
+            permissions: user.role?.permissions?.map(p => p.name) || [],
         };
 
         const token = this.jwtService.sign(payload, {
@@ -66,11 +66,14 @@ export class AuthService {
         const valid = await bcrypt.compare(refreshToken, user.refreshToken);
         if (!valid) throw new BadRequestException('Invalid refresh token');
 
+        const roles = user.role?.name || 'Seller';
+        const permissions = user.role?.permissions?.map(p => p.name) || [];
+
         const payload = { 
             sub: user.id,
             email: user.email,
-            role: user.role, 
-            permissions: user.role.permissions.map(p => p.name)
+            roles,
+            permissions,
         };
 
         // Nuevo access token
