@@ -5,9 +5,10 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RbacGuard } from 'src/common/guards/rbac.guard';
 
 @Controller('user')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RbacGuard)
 export class UserController {
     constructor(private readonly userService: UserService) {}
 
@@ -17,7 +18,6 @@ export class UserController {
         return this.userService.create(dto);
     }
 
-    @Roles('admin')
     @Get()
     findAll() {
         return this.userService.findAll();
