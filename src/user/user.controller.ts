@@ -1,41 +1,65 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
+import { RegisterDto } from 'src/auth/dto/register.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RbacGuard } from 'src/common/guards/rbac.guard';
+import { Permissions } from 'src/common/decorators/permissions.decorator';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
 
+@ApiTags('Usuarios')
+@ApiBearerAuth()
 @Controller('user')
-@UseGuards(RolesGuard)
+@UseGuards(JwtAuthGuard, RbacGuard)
 export class UserController {
     constructor(private readonly userService: UserService) {}
 
-
-    @Roles('admin')
+    @ApiOperation({ summary: 'Crear un nuevo usuario' })
+    @ApiResponse({ status: 201, description: 'Usuario creado exitosamente' })
+    @ApiBody({ type: RegisterDto })
+    @Roles('Admin')
+    @Permissions('Create')
     @Post()
-    create(@Body() dto: CreateUserDto) {
+    create(@Body() dto: RegisterDto) {
         return this.userService.create(dto);
     }
 
-    @Roles('admin')
+    @ApiOperation({ summary: 'Obtener todos los usuarios' })
+    @ApiResponse({ status: 200, description: 'Lista de usuarios obtenida exitosamente' })
+    @Roles('Admin')
+    @Permissions('Read')
     @Get()
     findAll() {
         return this.userService.findAll();
     }
 
-    @Roles('admin')
+    @ApiOperation({ summary: 'Obtener un usuario por ID' })
+    @ApiResponse({ status: 200, description: 'Usuario encontrado' })
+    @ApiParam({ name: 'id', description: 'ID del usuario', type: Number })
+    @Roles('Admin')
+    @Permissions('Read')
     @Get(':id')
     findOne(@Param('id') id: string) {
         return this.userService.findOne(+id);
     }
 
-    @Roles('admin')
+    @ApiOperation({ summary: 'Actualizar un usuario existente' })
+    @ApiResponse({ status: 200, description: 'Usuario actualizado exitosamente' })
+    @ApiParam({ name: 'id', description: 'ID del usuario a actualizar', type: Number })
+    @ApiBody({ type: UpdateUserDto })
+    @Roles('Admin')
+    @Permissions('Update')
     @Put(':id')
-    update(@Param('id') id: string, @Body() dto: UpdateUserDto) {
-        return this.userService.update(+id, dto);
+    update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+        return this.userService.update(+id, updateUserDto);
     }
 
-    @Roles('admin')
+    @ApiOperation({ summary: 'Eliminar un usuario' })
+    @ApiResponse({ status: 200, description: 'Usuario eliminado exitosamente' })
+    @ApiParam({ name: 'id', description: 'ID del usuario a eliminar', type: Number })
+    @Roles('Admin')
+    @Permissions('Delete')
     @Delete(':id')
     remove(@Param('id') id: string) {
         return this.userService.remove(+id);

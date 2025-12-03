@@ -4,6 +4,7 @@ import { AuditMiddleware } from './common/middleware/audit.middleware';
 import { ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -23,6 +24,17 @@ async function bootstrap() {
 
   // Interceptor global
   app.useGlobalInterceptors(new LoggingInterceptor());
+
+  // Configuración de Swagger
+  const config = new DocumentBuilder()
+    .setTitle('API Documentation')
+    .setDescription('Documentación de la API de RIWI Sportsline')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+  
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
 
   await app.listen(process.env.PORT ?? 3000);
 }

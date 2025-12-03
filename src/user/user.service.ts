@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from './user.entity';
-import { CreateUserDto } from './dto/create-user.dto';
+import { User } from './entities/user.entity';
+import { RegisterDto } from 'src/auth/dto/register.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
@@ -12,8 +12,8 @@ export class UserService {
         private userRepo: Repository<User>,
     ) {}
     
-    async create(createUserDto: CreateUserDto): Promise<User> {
-        const user = this.userRepo.create(createUserDto);
+    async create(dto: RegisterDto): Promise<User> {
+        const user = this.userRepo.create(dto);
         return this.userRepo.save(user);
     }
 
@@ -22,11 +22,21 @@ export class UserService {
     }
 
     async findOne(id: number): Promise<User> {
-        const user = await this.userRepo.findOne({ where: { id } });
+        const user = await this.userRepo.findOne({ 
+            where: { id },
+            relations: ['role', 'role.permissions']
+        });
         if (!user) {
             throw new NotFoundException(`User #${id} not found`);
         }
         return user;
+    }
+
+    async findByEmail(email: string): Promise<User | null> {
+        return this.userRepo.findOne({ 
+            where: { email },
+            relations: ['role', 'role.permissions']
+        });;
     }
 
     async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
@@ -40,5 +50,16 @@ export class UserService {
         if (result.affected === 0) {
             throw new NotFoundException(`User #${id} not found`);
         }
+    }
+
+    // guarda un nuevo hash del refresh token
+    async updateRefreshTokenHash(id: number, hash: string): Promise<void> {
+        await this.userRepo.update(id, { refreshToken: hash });
+    }
+
+    /** Devuelve el hash almacenado del refresh token */
+    async getRefreshTokenHash(id: number): Promise<string | null> {
+        const user = await this.findOne(id);
+        return user.refreshToken ?? null; 
     }
 }
