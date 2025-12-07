@@ -13,5 +13,5 @@ export class CreateUserDto {
   password: string;
 
   @IsString({ message: 'el rol debe ser texto'})
-  role: string 
+  role_id: number 
 }
