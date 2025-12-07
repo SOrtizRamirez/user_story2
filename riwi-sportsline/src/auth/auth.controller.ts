@@ -20,7 +20,7 @@ export class AuthController {
 
   @Post('register')
   async register(@Body() registerDto: RegisterDto) {
-    
+     
     const user = await this.userService.create( registerDto );
 
     return { message: 'Usuario registrado correctamente', user };

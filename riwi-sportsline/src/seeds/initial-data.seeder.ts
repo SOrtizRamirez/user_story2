@@ -17,7 +17,7 @@
       name: 'Admin',
       email: 'admin@example.com',
       password: '123456',
-      role: 'admin'
+      role_id: 1
     });
     await userRepo.save(adminUser);
 

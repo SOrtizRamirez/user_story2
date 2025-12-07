@@ -27,7 +27,7 @@ export class AuthService {
     };
 
     const accessToken = this.jwt.sign(payload, {
-      expiresIn: '15m',
+      expiresIn: '10m',
     });
 
     const refreshToken = this.jwt.sign(payload, {
@@ -49,7 +49,7 @@ export class AuthService {
     };
 
     return {
-      access_token: this.jwt.sign(payload, { expiresIn: '15m' }),
+      access_token: this.jwt.sign(payload, { expiresIn: '10m' }),
     };
   }
 }

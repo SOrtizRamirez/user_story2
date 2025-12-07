@@ -12,6 +12,7 @@ import { CustomerModule } from './customer/customer.module';
 import { OrderModule } from './order/order.module';
 import { ProductModule } from './product/product.module';
 import { AuthModule } from "./auth/auth.module";
+import { RolesModule } from './roles/roles.module';
 
 @Module({
   imports: [
@@ -40,7 +41,8 @@ import { AuthModule } from "./auth/auth.module";
     CustomerModule,
     OrderModule,
     ProductModule,
-    AuthModule
+    AuthModule,
+    RolesModule
   ],
   controllers: [AppController],
   providers: [AppService],
